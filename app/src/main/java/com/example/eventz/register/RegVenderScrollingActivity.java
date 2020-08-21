@@ -44,10 +44,8 @@ import java.util.ArrayList;
 public class RegVenderScrollingActivity extends AppCompatActivity implements SkillAdapter.onItemClickListener {
     private ArrayList<SkillItem> mSkillList;
     private RecyclerView mRecyclerView;
-    //private RecyclerView.LayoutManager mLayoutManager;
     private SkillAdapter mskillAdapter;
     private RequestQueue mRequestQueue;
-
     private TextInputLayout textInputEmail;
     private TextInputLayout textInputUsername;
     private TextInputLayout textInputPassword;
@@ -59,7 +57,6 @@ public class RegVenderScrollingActivity extends AppCompatActivity implements Ski
     private String fNameInput;
     private String lNameInput;
     private Button btnRegister;
-    private ArrayList<Integer> skillPositionArr;
     private ArrayList<String> skillIdArr;
     private ArrayList<String> skillNameArr;
     String URL = "http://192.168.1.103:8000/getTags";
@@ -83,18 +80,10 @@ public class RegVenderScrollingActivity extends AppCompatActivity implements Ski
         textInputFName = findViewById(R.id.text_input_FirstName);
         textInputLName = findViewById(R.id.text_input_LastName);
         btnRegister = findViewById(R.id.button_register_vender);
-        skillPositionArr = new ArrayList<>();
         mSkillList = new ArrayList<>();
         skillIdArr = new ArrayList<>();
         skillNameArr = new ArrayList<>();
         mRequestQueue = Volley.newRequestQueue(this);
-
-        emailInput = textInputEmail.getEditText().getText().toString().trim();
-        usernameInput = textInputUsername.getEditText().getText().toString().trim();
-        passwordInput = textInputPassword.getEditText().getText().toString().trim();
-        fNameInput = textInputFName.getEditText().getText().toString().trim();
-        lNameInput = textInputLName.getEditText().getText().toString().trim();
-
         mRecyclerView = findViewById(R.id.recyclerView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -103,12 +92,10 @@ public class RegVenderScrollingActivity extends AppCompatActivity implements Ski
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!validateEmail() | !validateUsername() | !validatePassword() | validateFname() | validateLname()) {
+                if (!validateEmail() | !validateUsername() | !validatePassword() | !validateFname() | !validateLname()) {
                     return;
                 }
-                else {
-                    registerVender(emailInput, usernameInput, passwordInput, fNameInput, lNameInput, skillIdArr, skillNameArr);
-                }
+                registerVender(emailInput, usernameInput, passwordInput, fNameInput, lNameInput, skillIdArr, skillNameArr);
 
             }
         });
@@ -116,37 +103,40 @@ public class RegVenderScrollingActivity extends AppCompatActivity implements Ski
     }
 
     private void registerVender(String emailInput, String usernameInput, String passwordInput, String fNameInput, String lNameInput, ArrayList<String> skillIdArr, ArrayList<String> skillNameArr) {
-        JSONObject json1= new JSONObject();
+        JSONArray jsonSkillArray = new JSONArray();
+        JSONObject json2 = new JSONObject();
+        final String outputjson;
+
         try {
             for (int i = 0; i < skillIdArr.size(); i++) {
+                JSONObject json1 = new JSONObject();
                 json1.put("tagId", skillIdArr.get(i));
                 json1.put("tagName", skillNameArr.get(i));
+                jsonSkillArray.put(json1);
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-        JSONArray jsonSkillArray = new JSONArray();
-        jsonSkillArray.put(json1);
-
-        JSONObject json2= new JSONObject();
         try {
-            json2.put("username",usernameInput);
-            json2.put("password",passwordInput);
-            json2.put("first_name",fNameInput);
-            json2.put("last_name",lNameInput);
-            json2.put("userType","3");
-            json2.put("email",emailInput);
-            json2.put("is_staff","1");
-            json2.put("skills",jsonSkillArray);
+            json2.put("username", usernameInput);
+            json2.put("password", passwordInput);
+            json2.put("first_name", fNameInput);
+            json2.put("last_name", lNameInput);
+            json2.put("userType", "3");
+            json2.put("email", emailInput);
+            json2.put("is_staff", "1");
+            json2.put("skills", jsonSkillArray);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
+        outputjson = json2.toString();
+        Log.i("OUTJSON", outputjson);
+
     }
 
     private boolean validateEmail() {
-        //emailInput = textInputEmail.getEditText().getText().toString().trim();
+        emailInput = textInputEmail.getEditText().getText().toString().trim();
         if (emailInput.isEmpty()) {
             textInputEmail.setError("Field can't be empty");
             return false;
@@ -157,7 +147,7 @@ public class RegVenderScrollingActivity extends AppCompatActivity implements Ski
     }
 
     private boolean validateUsername() {
-        //usernameInput = textInputUsername.getEditText().getText().toString().trim();
+        usernameInput = textInputUsername.getEditText().getText().toString().trim();
         if (usernameInput.isEmpty()) {
             textInputUsername.setError("Field can't be empty");
             return false;
@@ -171,7 +161,7 @@ public class RegVenderScrollingActivity extends AppCompatActivity implements Ski
     }
 
     private boolean validatePassword() {
-        //passwordInput = textInputPassword.getEditText().getText().toString().trim();
+        passwordInput = textInputPassword.getEditText().getText().toString().trim();
         if (passwordInput.isEmpty()) {
             textInputPassword.setError("Field can't be empty");
             return false;
@@ -182,7 +172,7 @@ public class RegVenderScrollingActivity extends AppCompatActivity implements Ski
     }
 
     private boolean validateFname() {
-        //fNameInput = textInputFName.getEditText().getText().toString().trim();
+        fNameInput = textInputFName.getEditText().getText().toString().trim();
         if (fNameInput.isEmpty()) {
             textInputFName.setError("Field can't be empty");
             return false;
@@ -193,7 +183,7 @@ public class RegVenderScrollingActivity extends AppCompatActivity implements Ski
     }
 
     private boolean validateLname() {
-        //lNameInput = textInputLName.getEditText().getText().toString().trim();
+        lNameInput = textInputLName.getEditText().getText().toString().trim();
         if (lNameInput.isEmpty()) {
             textInputLName.setError("Field can't be empty");
             return false;
