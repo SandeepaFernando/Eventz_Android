@@ -138,10 +138,6 @@ public class MainActivity extends AppCompatActivity {
 
                 // Starting MainActivity
                 Intent i = new Intent(getApplicationContext(), HomeActivity.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-                // Add new Flag to start new Activity
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(i);
                 finish();
 
