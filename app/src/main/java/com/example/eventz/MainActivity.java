@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences.Editor editor;
     UserSession session;
     User user = new User();
-    Boolean Succ;
     private String token;
     private RequestQueue requestQueue;
     String URL = "http://192.168.1.103:8000/login";
@@ -107,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void login() {
-        user.store_data(user.getToken(),user.getUserName(), getApplicationContext());
+        user.store_data(user.getToken(), user.getUserName(), getApplicationContext());
 
         String user = userName.getText().toString();
         String pass = password.getText().toString();
@@ -173,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
 
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, null,
                 new Response.Listener<JSONObject>() {
-                    @RequiresApi (api = Build.VERSION_CODES.KITKAT)
+                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
@@ -181,14 +180,12 @@ public class MainActivity extends AppCompatActivity {
 
                             token = response.getString("token");
 
-                            if (token != null)
-                            {
+                            if (token != null) {
                                 Log.i("TOKEN", token);
                                 user.setToken(token);
                                 user.setUserName(uNameSP);
                                 login();
-                            }
-                            else {
+                            } else {
 
                                 Toast.makeText(getApplicationContext(), "Username/Password is incorrect", Toast.LENGTH_LONG).show();
                             }

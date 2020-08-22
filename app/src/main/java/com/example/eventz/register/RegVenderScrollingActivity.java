@@ -1,5 +1,6 @@
 package com.example.eventz.register;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -13,6 +14,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.eventz.MainActivity;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -27,8 +29,10 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.eventz.R;
@@ -38,6 +42,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
@@ -46,6 +51,7 @@ public class RegVenderScrollingActivity extends AppCompatActivity implements Ski
     private RecyclerView mRecyclerView;
     private SkillAdapter mskillAdapter;
     private RequestQueue mRequestQueue;
+    private RequestQueue mRequestQueueReg;
     private TextInputLayout textInputEmail;
     private TextInputLayout textInputUsername;
     private TextInputLayout textInputPassword;
@@ -60,6 +66,7 @@ public class RegVenderScrollingActivity extends AppCompatActivity implements Ski
     private ArrayList<String> skillIdArr;
     private ArrayList<String> skillNameArr;
     String URL = "http://192.168.1.103:8000/getTags";
+    String URL_REG = "http://192.168.1.103:8000/registerVendor";
 
     public RegVenderScrollingActivity() {
     }
@@ -84,6 +91,7 @@ public class RegVenderScrollingActivity extends AppCompatActivity implements Ski
         skillIdArr = new ArrayList<>();
         skillNameArr = new ArrayList<>();
         mRequestQueue = Volley.newRequestQueue(this);
+        mRequestQueueReg = Volley.newRequestQueue(this);
         mRecyclerView = findViewById(R.id.recyclerView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -132,6 +140,51 @@ public class RegVenderScrollingActivity extends AppCompatActivity implements Ski
 
         outputjson = json2.toString();
         Log.i("OUTJSON", outputjson);
+
+        String res;
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL_REG, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.i("RESPONS", response.toString());
+                        try {
+                            String res = response.getString("response");
+
+                            if (res.equals("Successfully registered")) {
+                                Intent intent = new Intent(RegVenderScrollingActivity.this, MainActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(RegVenderScrollingActivity.this, "Registration Fail!, Try Again.", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println(error.getMessage());
+                Toast.makeText(RegVenderScrollingActivity.this, "Check your connectivity", Toast.LENGTH_LONG).show();
+            }
+        }) {
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+            @Override
+            public byte[] getBody() {
+                return outputjson == null ? null : outputjson.getBytes(Charset.forName("UTF-8"));
+            }
+
+        };
+
+        int socketTimeout = 500000;//30 seconds - change to what you want
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        request.setRetryPolicy(policy);
+
+        mRequestQueueReg.add(request);
 
     }
 

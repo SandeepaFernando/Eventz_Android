@@ -17,7 +17,7 @@ import com.example.eventz.R;
 
 import java.util.ArrayList;
 
-public class SkillAdapter extends RecyclerView.Adapter<SkillAdapter.skillViewHolder>{
+public class SkillAdapter extends RecyclerView.Adapter<SkillAdapter.skillViewHolder> {
     private Context mcontext;
     private ArrayList<SkillItem> mSkillList;
     private static onItemClickListener mlistener;
@@ -28,9 +28,10 @@ public class SkillAdapter extends RecyclerView.Adapter<SkillAdapter.skillViewHol
 
     public interface onItemClickListener {
         void onItemClick(int position);
-       // void onDeleteClick(int position);
+        // void onDeleteClick(int position);
     }
-    public SkillAdapter (Context mcontext, ArrayList<SkillItem> mSkillList) {
+
+    public SkillAdapter(Context mcontext, ArrayList<SkillItem> mSkillList) {
         this.mcontext = mcontext;
         this.mSkillList = mSkillList;
     }
