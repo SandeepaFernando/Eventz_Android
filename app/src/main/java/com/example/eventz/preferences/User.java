@@ -7,7 +7,7 @@ import android.content.SharedPreferences;
 public class User {
     private static String Token;
     private static String userName;
-    //private static String user_Preferences;
+    private static String Type;
     private Context context;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
@@ -33,14 +33,22 @@ public class User {
         userName = uName;
     }
 
-    public void store_data(String Token,String userName, Context context) {
+    public String getType() {
+        return Type;
+    }
 
+    public void setType(String type) {
+        Type = type;
+    }
+
+    public void store_data(String Token, String userName, String Type, Context context) {
         this.context = context;
         sharedPreferences = context.getSharedPreferences("UserIn", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
         editor.putString("KEY_TOKEN", Token);
         editor.putString("USERNAME", userName);
+        editor.putString("USERTYPE", Type);
         editor.apply();
 
     }

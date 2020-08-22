@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     UserSession session;
-    User user = new User();
+    User usersp = new User();
     private String token;
     private RequestQueue requestQueue;
     String URL = "http://192.168.1.103:8000/login";
@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loginVendor() {
-        user.store_data(user.getToken(), user.getUserName(), getApplicationContext());
+        usersp.store_data(usersp.getToken(), usersp.getUserName(), usersp.getType(), getApplicationContext());
 
         String user = userName.getText().toString();
         String pass = password.getText().toString();
@@ -178,15 +178,17 @@ public class MainActivity extends AppCompatActivity {
 
                             if (token != null) {
                                 Log.i("TOKEN", token);
-                                user.setToken(token);
-                                user.setUserName(uNameSP);
+                                usersp.setToken(token);
+                                usersp.setUserName(uNameSP);
 
                                 JSONObject user = response.getJSONObject("user");
                                 String userType = user.getString("userType");
                                 Log.i("USERTYPE", userType);
+                                usersp.setType(userType);
 
                                 if (userType.equals("3")) {
                                     loginVendor();
+
                                 } else if (userType.equals("")) {
                                     loginOrganizer();
                                 }
