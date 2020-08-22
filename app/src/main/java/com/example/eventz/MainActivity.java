@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void login() {
+    private void loginVendor() {
         user.store_data(user.getToken(), user.getUserName(), getApplicationContext());
 
         String user = userName.getText().toString();
@@ -184,7 +184,16 @@ public class MainActivity extends AppCompatActivity {
                                 Log.i("TOKEN", token);
                                 user.setToken(token);
                                 user.setUserName(uNameSP);
-                                login();
+
+                                JSONObject user = response.getJSONObject("user");
+                                String userType = user.getString("userType");
+                                Log.i("USERTYPE", userType);
+
+                                if (userType.equals("3")) {
+                                    loginVendor();
+                                } else if (userType.equals("")) {
+                                    loginOrganizer();
+                                }
                             } else {
 
                                 Toast.makeText(getApplicationContext(), "Username/Password is incorrect", Toast.LENGTH_LONG).show();
@@ -227,5 +236,8 @@ public class MainActivity extends AppCompatActivity {
 
         requestQueue.add(request);
 
+    }
+
+    private void loginOrganizer() {
     }
 }
