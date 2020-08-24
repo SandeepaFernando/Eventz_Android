@@ -22,6 +22,7 @@
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             android:background="@drawable/party_image"
+            app:titleEnabled="false"
             app:toolbarId="@+id/toolbar">
 
             <androidx.appcompat.widget.Toolbar

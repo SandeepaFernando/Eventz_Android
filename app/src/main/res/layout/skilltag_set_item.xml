@@ -3,15 +3,15 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
     android:layout_marginBottom="6dp"
-    app:cardCornerRadius="8dp">
+    app:cardCornerRadius="20dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="4dp"
-        android:orientation="horizontal"
         android:layout_marginBottom="10dp"
-        android:background="#F4F4F4">
+        android:background="#F4F4F4"
+        android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/image1"
@@ -27,12 +27,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:paddingLeft="10dp"
-            android:padding="10dp"
             android:hint="tag"
+            android:paddingLeft="10dp"
             android:textColor="@android:color/black"
             android:textSize="15sp"
-            android:textStyle="bold" />
+            android:textStyle="normal" />
 
 
     </LinearLayout>
