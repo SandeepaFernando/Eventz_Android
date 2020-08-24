@@ -1,5 +1,6 @@
 package com.example.eventz.home.ui.home;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,6 +31,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.eventz.R;
+import com.example.eventz.eventInfo.Event_infoActivity;
 import com.example.eventz.home.VendorAdapter;
 import com.example.eventz.home.VendorInfo;
 import com.example.eventz.preferences.User;
@@ -195,6 +197,9 @@ public class HomeFragment extends Fragment implements VendorAdapter.onItemClickL
     @Override
     public void onItemClick(int position) {
         Log.i("CLICK ID" , eventIdArr.get(position));
+        Intent intent = new Intent(getActivity(), Event_infoActivity.class);
+        intent.putExtra("eventId", eventIdArr.get(position));
+        startActivity(intent);
 
     }
 }

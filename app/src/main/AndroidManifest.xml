@@ -13,9 +13,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".eventInfo.Event_infoActivity"
+            android:label="@string/title_activity_event_info"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
             android:name=".register.RegOrganizerScrollingActivity"
             android:label="@string/title_activity_reg_organizer_scrolling"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".register.RegVenderScrollingActivity"
             android:label="@string/title_activity_reg_vender_scrolling"

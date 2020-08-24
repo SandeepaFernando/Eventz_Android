@@ -104,4 +104,5 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="title_activity_reg_organizer_scrolling">ScrollingActivity</string>
+    <string name="title_activity_event_info">ScrollingActivity</string>
 </resources>
