@@ -54,11 +54,11 @@ public class HomeActivity extends AppCompatActivity {
 
         //----------------------------------------------------------------------------------------------------------------------
 
-        SharedPreferences sp = user.retrieveUserData(getApplicationContext());
-        String userType = sp.getString("USERTYPE", "");
-        String token = sp.getString("KEY_TOKEN", "");
-
-        Log.i("HOME-SP", userType + " " + token);
+//        SharedPreferences sp = user.retrieveUserData(getApplicationContext());
+//        String userType = sp.getString("USERTYPE", "");
+//        String token = sp.getString("KEY_TOKEN", "");
+//
+//        Log.i("HOME-SP", userType + " " + token);
 
 
     }
