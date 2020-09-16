@@ -57,16 +57,22 @@ public class RegVenderScrollingActivity extends AppCompatActivity implements Ski
     private TextInputLayout textInputPassword;
     private TextInputLayout textInputFName;
     private TextInputLayout textInputLName;
+    private TextInputLayout textInputLocation;
+    private TextInputLayout textInputminBudget;
+    private TextInputLayout textInputmaxBudget;
     private String emailInput;
     private String usernameInput;
     private String passwordInput;
     private String fNameInput;
     private String lNameInput;
+    private String minBudgetInput;
+    private String maxBudgetInput;
+    private String locationInput;
     private Button btnRegister;
     private ArrayList<String> skillIdArr;
     private ArrayList<String> skillNameArr;
-    String URL = "http://192.168.1.103:8000/getTags";
-    String URL_REG = "http://192.168.1.103:8000/registerVendor";
+    String URL = "http://192.168.1.102:8000/getTags";
+    String URL_REG = "http://192.168.1.102:8000/registerVendor";
 
     public RegVenderScrollingActivity() {
     }
@@ -86,6 +92,9 @@ public class RegVenderScrollingActivity extends AppCompatActivity implements Ski
         textInputPassword = findViewById(R.id.text_input_password);
         textInputFName = findViewById(R.id.text_input_FirstName);
         textInputLName = findViewById(R.id.text_input_LastName);
+        textInputLocation = findViewById(R.id.text_input_location);
+        textInputmaxBudget = findViewById(R.id.text_input_max);
+        textInputminBudget = findViewById(R.id.text_input_min);
         btnRegister = findViewById(R.id.button_register_vender);
         mSkillList = new ArrayList<>();
         skillIdArr = new ArrayList<>();
@@ -100,17 +109,17 @@ public class RegVenderScrollingActivity extends AppCompatActivity implements Ski
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!validateEmail() | !validateUsername() | !validatePassword() | !validateFname() | !validateLname()) {
+                if (!validateEmail() | !validateUsername() | !validatePassword() | !validateFname() | !validateLname() | !validateLocation() | !validatemaxBudget() | !validateminBudget()) {
                     return;
                 }
-                registerVender(emailInput, usernameInput, passwordInput, fNameInput, lNameInput, skillIdArr, skillNameArr);
+                registerVender(emailInput, usernameInput, passwordInput, fNameInput, lNameInput, locationInput, maxBudgetInput, minBudgetInput,skillIdArr, skillNameArr);
 
             }
         });
 
     }
 
-    private void registerVender(String emailInput, String usernameInput, String passwordInput, String fNameInput, String lNameInput, ArrayList<String> skillIdArr, ArrayList<String> skillNameArr) {
+    private void registerVender(String emailInput, String usernameInput, String passwordInput, String fNameInput, String lNameInput, String locationInput, String maxBudgetInput ,String minBudgetInput, ArrayList<String> skillIdArr, ArrayList<String> skillNameArr) {
         JSONArray jsonSkillArray = new JSONArray();
         JSONObject json2 = new JSONObject();
         final String outputjson;
@@ -133,6 +142,9 @@ public class RegVenderScrollingActivity extends AppCompatActivity implements Ski
             json2.put("userType", "3");
             json2.put("email", emailInput);
             json2.put("is_staff", "1");
+            json2.put("location", locationInput);
+            json2.put("minBudget", minBudgetInput);
+            json2.put("maxBudget", maxBudgetInput);
             json2.put("skills", jsonSkillArray);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -242,6 +254,39 @@ public class RegVenderScrollingActivity extends AppCompatActivity implements Ski
             return false;
         } else {
             textInputLName.setError(null);
+            return true;
+        }
+    }
+
+    private boolean validateLocation() {
+        locationInput = textInputLocation.getEditText().getText().toString().trim();
+        if (locationInput.isEmpty()) {
+            textInputLocation.setError("Field can't be empty");
+            return false;
+        } else {
+            textInputLocation.setError(null);
+            return true;
+        }
+    }
+
+    private boolean validateminBudget() {
+        minBudgetInput = textInputminBudget.getEditText().getText().toString().trim();
+        if (minBudgetInput.isEmpty()) {
+            textInputminBudget.setError("Field can't be empty");
+            return false;
+        } else {
+            textInputminBudget.setError(null);
+            return true;
+        }
+    }
+
+    private boolean validatemaxBudget() {
+        maxBudgetInput = textInputmaxBudget.getEditText().getText().toString().trim();
+        if (maxBudgetInput.isEmpty()) {
+            textInputmaxBudget.setError("Field can't be empty");
+            return false;
+        } else {
+            textInputmaxBudget.setError(null);
             return true;
         }
     }
