@@ -105,4 +105,6 @@
     </string>
     <string name="title_activity_reg_organizer_scrolling">ScrollingActivity</string>
     <string name="title_activity_event_info">ScrollingActivity</string>
+    <string name="url_end">100</string>
+
 </resources>

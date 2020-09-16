@@ -71,8 +71,8 @@ public class RegVenderScrollingActivity extends AppCompatActivity implements Ski
     private Button btnRegister;
     private ArrayList<String> skillIdArr;
     private ArrayList<String> skillNameArr;
-    String URL = "http://192.168.1.102:8000/getTags";
-    String URL_REG = "http://192.168.1.102:8000/registerVendor";
+//    String URL = "http://192.168.1.102:8000/getTags";
+//    String URL_REG = "http://192.168.1.102:8000/registerVendor";
 
     public RegVenderScrollingActivity() {
     }
@@ -112,14 +112,14 @@ public class RegVenderScrollingActivity extends AppCompatActivity implements Ski
                 if (!validateEmail() | !validateUsername() | !validatePassword() | !validateFname() | !validateLname() | !validateLocation() | !validatemaxBudget() | !validateminBudget()) {
                     return;
                 }
-                registerVender(emailInput, usernameInput, passwordInput, fNameInput, lNameInput, locationInput, maxBudgetInput, minBudgetInput,skillIdArr, skillNameArr);
+                registerVender(emailInput, usernameInput, passwordInput, fNameInput, lNameInput, locationInput, maxBudgetInput, minBudgetInput, skillIdArr, skillNameArr);
 
             }
         });
 
     }
 
-    private void registerVender(String emailInput, String usernameInput, String passwordInput, String fNameInput, String lNameInput, String locationInput, String maxBudgetInput ,String minBudgetInput, ArrayList<String> skillIdArr, ArrayList<String> skillNameArr) {
+    private void registerVender(String emailInput, String usernameInput, String passwordInput, String fNameInput, String lNameInput, String locationInput, String maxBudgetInput, String minBudgetInput, ArrayList<String> skillIdArr, ArrayList<String> skillNameArr) {
         JSONArray jsonSkillArray = new JSONArray();
         JSONObject json2 = new JSONObject();
         final String outputjson;
@@ -154,6 +154,8 @@ public class RegVenderScrollingActivity extends AppCompatActivity implements Ski
         Log.i("OUTJSON", outputjson);
 
         String res;
+        String end_num = getString(R.string.url_end);
+        String URL_REG = "http://192.168.1." + end_num + ":8000/registerVendor";
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL_REG, null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -292,6 +294,9 @@ public class RegVenderScrollingActivity extends AppCompatActivity implements Ski
     }
 
     void fillSkillData() {
+        String end_num = getString(R.string.url_end);
+        String URL = "http://192.168.1." + end_num + ":8000/getTags";
+
         final JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, URL, null,
                 new Response.Listener<JSONArray>() {
                     @RequiresApi(api = Build.VERSION_CODES.KITKAT)

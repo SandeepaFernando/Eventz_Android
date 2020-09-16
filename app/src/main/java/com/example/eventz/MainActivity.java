@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     User usersp = new User();
     private String token;
     private RequestQueue requestQueue;
-    String URL = "http://192.168.1.103:8000/login";
+    //String URL = "http://192.168.1.100:8000/login";
 
     @SuppressLint("CommitPrefEdits")
     @Override
@@ -107,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void loginVendor() {
         usersp.store_data(usersp.getToken(), usersp.getUserName(), usersp.getType(), getApplicationContext());
+        usersp.store_userObj(usersp.getUserobj(), getApplicationContext());
 
         String user = userName.getText().toString();
         String pass = password.getText().toString();
@@ -166,6 +167,9 @@ public class MainActivity extends AppCompatActivity {
 
         requestQueue = Volley.newRequestQueue(getApplicationContext());
 
+        String end_num = getString(R.string.url_end);
+        String URL = "http://192.168.1." + end_num + ":8000/login";
+
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, null,
                 new Response.Listener<JSONObject>() {
                     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -182,6 +186,8 @@ public class MainActivity extends AppCompatActivity {
                                 usersp.setUserName(uNameSP);
 
                                 JSONObject user = response.getJSONObject("user");
+                                usersp.setUserobj(user.toString());
+
                                 String userType = user.getString("userType");
                                 Log.i("USERTYPE", userType);
                                 usersp.setType(userType);

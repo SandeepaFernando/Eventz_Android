@@ -59,7 +59,9 @@ public class HomeFragment extends Fragment implements VendorAdapter.onItemClickL
     private ArrayList<String> eventIdArr;
     String token;
     String userType;
-    String URL = "http://192.168.1.103:8000/events";
+//    String end_num = getString(R.string.url_end);
+//    String URL = "http://192.168.1."+end_num+":8000/events";
+    //String URL;
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -127,13 +129,15 @@ public class HomeFragment extends Fragment implements VendorAdapter.onItemClickL
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void getAllEvents() {
-        if (!mevnetList.isEmpty()){
+        if (!mevnetList.isEmpty()) {
             mevnetList.clear();
         }
-        if (!eventIdArr.isEmpty()){
+        if (!eventIdArr.isEmpty()) {
             eventIdArr.clear();
         }
 
+        String end_num = getString(R.string.url_end);
+        String URL = "http://192.168.1." + end_num + ":8000/events";
         final JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, URL, null,
                 new Response.Listener<JSONArray>() {
                     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -153,7 +157,7 @@ public class HomeFragment extends Fragment implements VendorAdapter.onItemClickL
                                 String noOfGuests = jsonObject.getString("noOfGuests");
 
                                 eventIdArr.add(id);
-                                mevnetList.add(new VendorInfo(title,venue,date,noOfGuests));
+                                mevnetList.add(new VendorInfo(title, venue, date, noOfGuests));
                             }
 
                             mvendorAdapter = new VendorAdapter(getActivity(), mevnetList);
@@ -177,11 +181,11 @@ public class HomeFragment extends Fragment implements VendorAdapter.onItemClickL
                 }
 
             }
-        }){
+        }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String>  params = new HashMap<String, String>();
-                params.put("Authorization", "Token " +token);
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Authorization", "Token " + token);
 
                 return params;
             }
@@ -196,7 +200,7 @@ public class HomeFragment extends Fragment implements VendorAdapter.onItemClickL
 
     @Override
     public void onItemClick(int position) {
-        Log.i("CLICK ID" , eventIdArr.get(position));
+        Log.i("CLICK ID", eventIdArr.get(position));
         Intent intent = new Intent(getActivity(), Event_infoActivity.class);
         intent.putExtra("eventId", eventIdArr.get(position));
         startActivity(intent);

@@ -55,7 +55,7 @@ public class Event_infoActivity extends AppCompatActivity {
     TextView titleTV, descriptionTV, venueTV, dateTV, num_peopleTV, f_nameTV, emailTV;
     String title, description, eventDate, venue, noOfGuests, fname, email;
     String token;
-    String URL = "http://192.168.1.103:8000/events";
+    //String URL = "http://192.168.1.103:8000/events";
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
@@ -106,6 +106,9 @@ public class Event_infoActivity extends AppCompatActivity {
         final Intent intent = getIntent();
         eventId = intent.getStringExtra("eventId");
         Log.i("EXTRASITE_ID", eventId);
+
+        String end_num = getString(R.string.url_end);
+        String URL = "http://192.168.1." + end_num + ":8000/events";
 
         String finalURL = URL + "?eventId=" + eventId;
 
