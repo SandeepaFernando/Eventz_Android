@@ -153,7 +153,7 @@ public class RegVenderScrollingActivity extends AppCompatActivity implements Ski
         outputjson = json2.toString();
         Log.i("OUTJSON", outputjson);
 
-        String res;
+        //String res;
         String end_num = getString(R.string.url_end);
         String URL_REG = "http://192.168.1." + end_num + ":8000/registerVendor";
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL_REG, null,
