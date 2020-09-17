@@ -10,34 +10,33 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.eventz.MainActivity;
 import com.example.eventz.R;
+import com.example.eventz.home.HomeActivity;
 import com.example.eventz.preferences.User;
-import com.example.eventz.register.RegVenderScrollingActivity;
 import com.example.eventz.register.SkillAdapter;
 import com.example.eventz.register.SkillItem;
-import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,7 +59,6 @@ public class GalleryFragment extends Fragment implements SkillAdapter.onItemClic
     String userType;
     String userid;
     String userName;
-    String password;
     private EditText textInputEmail;
     private EditText textInputFName;
     private EditText textInputLName;
@@ -70,11 +68,13 @@ public class GalleryFragment extends Fragment implements SkillAdapter.onItemClic
     private RecyclerView mRecyclerView;
     private SkillAdapter mskillAdapter;
     private Button btnUpdate;
+    private ImageView btnaddSkills;
     private ArrayList<SkillItem> mSkillList;
     private ArrayList<String> skillIdArr;
     private ArrayList<String> skillNameArr;
-    private RequestQueue mRequestQueueUpdatevendor;
-    //String URL = "http://192.168.1.100:8000/events";
+    private RequestQueue mRequestQueueUpdatevendor, mRequestQueueFillSkills;
+    private int mStatusCode = 0;
+    User usersp = new User();
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -99,10 +99,12 @@ public class GalleryFragment extends Fragment implements SkillAdapter.onItemClic
             textInputmaxBudget = root.findViewById(R.id.text_input_max_edit);
             textInputminBudget = root.findViewById(R.id.text_input_min_edit);
             btnUpdate = root.findViewById(R.id.button_vendor_edit);
+            btnaddSkills = root.findViewById(R.id.add_skills);
             mSkillList = new ArrayList<>();
             skillIdArr = new ArrayList<>();
             skillNameArr = new ArrayList<>();
             mRequestQueueUpdatevendor = Volley.newRequestQueue(getActivity());
+            mRequestQueueFillSkills = Volley.newRequestQueue(getActivity());
             mRecyclerView = root.findViewById(R.id.recyclerView_edit);
             mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -156,6 +158,13 @@ public class GalleryFragment extends Fragment implements SkillAdapter.onItemClic
                     @Override
                     public void onClick(View v) {
                         updateVendor();
+                    }
+                });
+
+                btnaddSkills.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        fillSkillData();
                     }
                 });
 
@@ -219,21 +228,29 @@ public class GalleryFragment extends Fragment implements SkillAdapter.onItemClic
         String URL_REG = "http://192.168.1." + end_num + ":8000/updateVendor";
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, URL_REG, null,
                 new Response.Listener<JSONObject>() {
+                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.i("RESPONS", response.toString());
                         try {
-                            String res = response.getString("response");
+                            Log.i(" statusCode - ", String.valueOf(mStatusCode));
+                            if (mStatusCode == 201) {
+                                String userName = response.getString("username");
 
-//                            if (res.equals("Successfully registered")) {
-//                                Intent intent = new Intent(RegVenderScrollingActivity.this, MainActivity.class);
-//                                startActivity(intent);
-//                                finish();
-//                            }
+                                usersp.store_userObj(String.valueOf(response), Objects.requireNonNull(getActivity()));
+
+                                Log.i(" userName - ", userName);
+                                Toast.makeText(getActivity(), userName + " successfully Updated.", Toast.LENGTH_LONG).show();
+
+                                Intent intent = new Intent(getActivity(), HomeActivity.class);
+                                startActivity(intent);
+                                getActivity().finish();
+                            }
+
 
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            Toast.makeText(getActivity(), "Registration Fail!, Try Again.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getActivity(), "Update Fail!, Try Again.", Toast.LENGTH_LONG).show();
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -261,6 +278,14 @@ public class GalleryFragment extends Fragment implements SkillAdapter.onItemClic
                 return params;
             }
 
+            @Override
+            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+                if (response != null) {
+                    mStatusCode = response.statusCode;
+                }
+                return super.parseNetworkResponse(response);
+            }
+
         };
 
         int socketTimeout = 500000;//30 seconds - change to what you want
@@ -270,6 +295,72 @@ public class GalleryFragment extends Fragment implements SkillAdapter.onItemClic
         mRequestQueueUpdatevendor.add(request);
 
     }
+
+    void fillSkillData() {
+        skillIdArr.clear();
+        skillNameArr.clear();
+        mSkillList.clear();
+
+        String end_num = getString(R.string.url_end);
+        String URL = "http://192.168.1." + end_num + ":8000/getTags";
+
+        final JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, URL, null,
+                new Response.Listener<JSONArray>() {
+                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+
+                            Log.i("RESPONSE", response.toString());
+
+                            for (int j = 0; j < response.length(); j++) {
+                                JSONObject jsonObject = response.getJSONObject(j);
+                                Log.i("INSIDEOBJECR", jsonObject.toString());
+                                String skillID = String.valueOf(jsonObject.getInt("id"));
+                                String tagName = jsonObject.getString("tagName");
+
+                                skillIdArr.add(skillID);
+                                skillNameArr.add(tagName);
+
+                                mSkillList.add(new SkillItem(tagName));
+
+                            }
+
+                            Log.i("ARRRRR", skillIdArr.toString());
+                            Log.i("ARRRRR", skillNameArr.toString());
+
+                            mskillAdapter = new SkillAdapter(getActivity(), mSkillList);
+                            mRecyclerView.setAdapter(mskillAdapter);
+                            SkillAdapter.setOnItemClickListener(GalleryFragment.this);
+
+
+                        } catch (JSONException e) {
+                            Toast.makeText(getActivity(), "error", Toast.LENGTH_LONG).show();
+
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (error.networkResponse == null) {
+                    if (error.getClass().equals(TimeoutError.class)) {
+                        Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.v("VOLLEY", error.toString());
+                    }
+                }
+
+            }
+        }) {
+
+        };
+
+        int socketTimeout = 500000;//30 seconds - change to what you want
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        request.setRetryPolicy(policy);
+
+        mRequestQueueFillSkills.add(request);
+    }
+
 
     @Override
     public void onItemClick(int position) {
