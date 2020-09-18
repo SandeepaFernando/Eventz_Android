@@ -1,5 +1,6 @@
 package com.example.eventz.home;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +9,7 @@ import android.view.Menu;
 import android.widget.Toast;
 
 import com.example.eventz.R;
+import com.example.eventz.chatbot.ChatActivity;
 import com.example.eventz.preferences.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -36,7 +38,8 @@ public class HomeActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), "Click", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(HomeActivity.this, ChatActivity.class);
+                startActivity(intent);
             }
         });
 
