@@ -65,14 +65,20 @@ public class GalleryFragment extends Fragment implements SkillAdapter.onItemClic
     private EditText textInputLocation;
     private EditText textInputminBudget;
     private EditText textInputmaxBudget;
+    private EditText textInputEmailOrganizer;
+    private EditText textInputFNameOrganizer;
+    private EditText textInputLNameOrganizer;
+    private EditText textInputLocationOrganizer;
     private RecyclerView mRecyclerView;
     private SkillAdapter mskillAdapter;
     private Button btnUpdate;
+    private Button btnUpdateOrganizer;
     private ImageView btnaddSkills;
     private ArrayList<SkillItem> mSkillList;
     private ArrayList<String> skillIdArr;
     private ArrayList<String> skillNameArr;
     private RequestQueue mRequestQueueUpdatevendor, mRequestQueueFillSkills;
+    private RequestQueue mRequestQueueUpdateOrganizer;
     private int mStatusCode = 0;
     User usersp = new User();
 
@@ -173,14 +179,146 @@ public class GalleryFragment extends Fragment implements SkillAdapter.onItemClic
                 e.printStackTrace();
             }
 
+        } else {
+            root = inflater.inflate(R.layout.fragment_update_organizer, container, false);
+
+            textInputEmailOrganizer = root.findViewById(R.id.text_input_email_edit_organizer);
+            textInputFNameOrganizer = root.findViewById(R.id.text_input_FirstName_edit_organizer);
+            textInputLNameOrganizer = root.findViewById(R.id.text_input_LastName_edit_organizer);
+            textInputLocationOrganizer = root.findViewById(R.id.text_input_location_edit_organizer);
+            btnUpdateOrganizer = root.findViewById(R.id.button_Organizer_edit);
+            mRequestQueueUpdateOrganizer = Volley.newRequestQueue(getActivity());
+
+            SharedPreferences sp = user.retrieveUserOBJ(Objects.requireNonNull(getActivity()));
+            userOBJ = sp.getString("USEROBJ", "");
+            Log.i(" Update-User OBJ-SP", userOBJ);
+
+            try {
+                JSONObject obj = new JSONObject(userOBJ);
+                userid = obj.getString("id");
+                userName = obj.getString("username");
+                String first_name = obj.getString("first_name");
+                String last_name = obj.getString("last_name");
+                String email = obj.getString("email");
+                String location = obj.getString("location");
+
+                textInputEmailOrganizer.setText(email);
+                textInputFNameOrganizer.setText(first_name);
+                textInputLNameOrganizer.setText(last_name);
+                textInputLocationOrganizer.setText(location);
+
+                btnUpdateOrganizer.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        updateOrganizer();
+                    }
+                });
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
         }
 
-
-        // ***********this line should be inside of if(Vendor or organizer)
-        //root = inflater.inflate(R.layout.fragment_gallery, container, false);
-        //******************
-
         return root;
+    }
+
+    private void updateOrganizer() {
+        String editEmail = String.valueOf(textInputEmailOrganizer.getText());
+        String editFname = String.valueOf(textInputFNameOrganizer.getText());
+        String editLname = String.valueOf(textInputLNameOrganizer.getText());
+        String editLocation = String.valueOf(textInputLocationOrganizer.getText());
+
+        JSONObject json2 = new JSONObject();
+        final String outputjson;
+        try {
+            json2.put("id", userid);
+            json2.put("username", userName);
+            json2.put("first_name", editFname);
+            json2.put("last_name", editLname);
+            json2.put("userType", "2");
+            json2.put("email", editEmail);
+            json2.put("is_staff", "1");
+            json2.put("location", editLocation);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        outputjson = json2.toString();
+        Log.i("OUTJSON", outputjson);
+
+        String end_num = getString(R.string.url_end);
+        String URL_REG = "http://192.168.1." + end_num + ":8000/updateOrganizer";
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, URL_REG, null,
+                new Response.Listener<JSONObject>() {
+                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.i("RESPONS", response.toString());
+                        try {
+                            Log.i(" statusCode - ", String.valueOf(mStatusCode));
+                            if (mStatusCode == 201) {
+                                String userName = response.getString("username");
+
+                                usersp.store_userObj(String.valueOf(response), Objects.requireNonNull(getActivity()));
+
+                                Log.i(" userName - ", userName);
+                                Toast.makeText(getActivity(), userName + " successfully Updated.", Toast.LENGTH_LONG).show();
+
+                                Intent intent = new Intent(getActivity(), HomeActivity.class);
+                                startActivity(intent);
+                                getActivity().finish();
+                            }
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(getActivity(), "Update Fail!, Try Again.", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println(error.getMessage());
+                Toast.makeText(getActivity(), "Check your connectivity", Toast.LENGTH_LONG).show();
+            }
+        }) {
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+            @Override
+            public byte[] getBody() {
+                return outputjson == null ? null : outputjson.getBytes(Charset.forName("UTF-8"));
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Authorization", "Token " + token);
+
+                return params;
+            }
+
+            @Override
+            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+                if (response != null) {
+                    mStatusCode = response.statusCode;
+                }
+                return super.parseNetworkResponse(response);
+            }
+
+        };
+
+        int socketTimeout = 500000;//30 seconds - change to what you want
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        request.setRetryPolicy(policy);
+
+        mRequestQueueUpdateOrganizer.add(request);
+
+
     }
 
     private void updateVendor() {
