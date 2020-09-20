@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loginVendor() {
-        usersp.store_data(usersp.getToken(), usersp.getUserName(), usersp.getType(), getApplicationContext());
+        usersp.store_data(usersp.getToken(), usersp.getUserName(), usersp.getType(), usersp.getUserId(), getApplicationContext());
         usersp.store_userObj(usersp.getUserobj(), getApplicationContext());
 
         String user = userName.getText().toString();
@@ -192,6 +192,9 @@ public class MainActivity extends AppCompatActivity {
                                 Log.i("USERTYPE", userType);
                                 usersp.setType(userType);
 
+                                String userID = user.getString("id");
+                                usersp.setUserId(userID);
+
                                 if (userType.equals("3")) {
                                     loginVendor();
 
@@ -243,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loginOrganizer() {
-        usersp.store_data(usersp.getToken(), usersp.getUserName(), usersp.getType(), getApplicationContext());
+        usersp.store_data(usersp.getToken(), usersp.getUserName(), usersp.getType(),usersp.getUserId() , getApplicationContext());
         usersp.store_userObj(usersp.getUserobj(), getApplicationContext());
 
         String user = userName.getText().toString();

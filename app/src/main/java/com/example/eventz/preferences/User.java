@@ -9,6 +9,7 @@ public class User {
     private static String userName;
     private static String Type;
     private static String userobj;
+    private static String userId;
     private Context context;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
@@ -50,7 +51,15 @@ public class User {
         userobj = user_obj;
     }
 
-    public void store_data(String Token, String userName, String Type, Context context) {
+    public String getUserId(){
+        return userId;
+    }
+
+    public void setUserId(String userid){
+        userId = userid;
+    }
+
+    public void store_data(String Token, String userName, String Type, String userId, Context context) {
         this.context = context;
         sharedPreferences = context.getSharedPreferences("UserIn", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
@@ -58,6 +67,7 @@ public class User {
         editor.putString("KEY_TOKEN", Token);
         editor.putString("USERNAME", userName);
         editor.putString("USERTYPE", Type);
+        editor.putString("USER_ID", userId);
         editor.apply();
 
     }
