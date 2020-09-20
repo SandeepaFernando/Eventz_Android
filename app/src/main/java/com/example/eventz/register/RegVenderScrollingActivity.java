@@ -168,6 +168,8 @@ public class RegVenderScrollingActivity extends AppCompatActivity implements Ski
                                 Intent intent = new Intent(RegVenderScrollingActivity.this, MainActivity.class);
                                 startActivity(intent);
                                 finish();
+
+                                Toast.makeText(RegVenderScrollingActivity.this, "Registration Successful, Please Login now.", Toast.LENGTH_LONG).show();
                             }
 
                         } catch (JSONException e) {

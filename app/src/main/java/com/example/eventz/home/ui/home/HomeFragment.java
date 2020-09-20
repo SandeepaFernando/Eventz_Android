@@ -59,9 +59,6 @@ public class HomeFragment extends Fragment implements VendorAdapter.onItemClickL
     private ArrayList<String> eventIdArr;
     String token;
     String userType;
-//    String end_num = getString(R.string.url_end);
-//    String URL = "http://192.168.1."+end_num+":8000/events";
-    //String URL;
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -79,26 +76,21 @@ public class HomeFragment extends Fragment implements VendorAdapter.onItemClickL
 
         if (userType.equals("3")) {
             root = inflater.inflate(R.layout.fragment_home, container, false);
-            //textView = root.findViewById(R.id.text_home);
             eventIdArr = new ArrayList<>();
             mevnetList = new ArrayList<>();
             mRecyclerView = root.findViewById(R.id.recycler_view_vendor_home);
             mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
             requestQueue = Volley.newRequestQueue(Objects.requireNonNull(getActivity()));
+            swipeRefreshLayout = root.findViewById(R.id.swiperefresh);
+            pullDownFunc();
 
             getAllEvents();
 
+        } else {
+            root = inflater.inflate(R.layout.fragment_organizerhome, container, false);
+
         }
 
-//        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-//            @Override
-//            public void onChanged(@Nullable String s) {
-//                textView.setText(s);
-//            }
-//        });
-
-        swipeRefreshLayout = root.findViewById(R.id.swiperefresh);
-        pullDownFunc();
 
         return root;
     }

@@ -195,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
                                 if (userType.equals("3")) {
                                     loginVendor();
 
-                                } else if (userType.equals("")) {
+                                } else if (userType.equals("2")) {
                                     loginOrganizer();
                                 }
                             } else {
@@ -243,5 +243,58 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loginOrganizer() {
+        usersp.store_data(usersp.getToken(), usersp.getUserName(), usersp.getType(), getApplicationContext());
+        usersp.store_userObj(usersp.getUserobj(), getApplicationContext());
+
+        String user = userName.getText().toString();
+        String pass = password.getText().toString();
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putString("UName", user);
+        editor.putString("Pass", pass);
+        editor.apply();
+
+        // Validate if username, password is filled
+        if (user.trim().length() > 0 && pass.trim().length() > 0) {
+            String uName = null;
+            String uPassword = null;
+
+            if (sharedPreferences.contains("UName")) {
+                uName = sharedPreferences.getString("UName", "");
+
+            }
+
+            if (sharedPreferences.contains("Pass")) {
+                uPassword = sharedPreferences.getString("Pass", "");
+
+            }
+
+            if (user.equals(uName) && pass.equals(uPassword)) {
+
+                session.createUserLoginSession(uName, uPassword);
+
+                // Starting MainActivity
+                Intent i = new Intent(getApplicationContext(), HomeActivity.class);
+                startActivity(i);
+                finish();
+
+
+            } else {
+
+                // username / password doesn't match&
+                Toast.makeText(getApplicationContext(),
+                        "Username/Password is incorrect",
+                        Toast.LENGTH_SHORT).show();
+
+            }
+        } else {
+
+            // user didn't entered username or password
+            Toast.makeText(getApplicationContext(),
+                    "Please enter username and password",
+                    Toast.LENGTH_LONG).show();
+
+        }
     }
 }
