@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loginVendor() {
-        usersp.store_data(usersp.getToken(), usersp.getUserName(), usersp.getType(), usersp.getUserId(), getApplicationContext());
+        usersp.store_data(usersp.getToken(), usersp.getUserName(), usersp.getType(), usersp.getUserId(), usersp.getUserEmail(), getApplicationContext());
         usersp.store_userObj(usersp.getUserobj(), getApplicationContext());
 
         String user = userName.getText().toString();
@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
                             if (token != null) {
                                 Log.i("TOKEN", token);
                                 usersp.setToken(token);
-                                usersp.setUserName(uNameSP);
+
 
                                 JSONObject user = response.getJSONObject("user");
                                 usersp.setUserobj(user.toString());
@@ -191,6 +191,12 @@ public class MainActivity extends AppCompatActivity {
                                 String userType = user.getString("userType");
                                 Log.i("USERTYPE", userType);
                                 usersp.setType(userType);
+
+                                uNameSP = user.getString("username");
+                                usersp.setUserName(uNameSP);
+
+                                uNameSP = user.getString("email");
+                                usersp.setUserEmail(uNameSP);
 
                                 String userID = user.getString("id");
                                 usersp.setUserId(userID);
@@ -246,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loginOrganizer() {
-        usersp.store_data(usersp.getToken(), usersp.getUserName(), usersp.getType(),usersp.getUserId() , getApplicationContext());
+        usersp.store_data(usersp.getToken(), usersp.getUserName(), usersp.getType(), usersp.getUserId(), usersp.getUserEmail(), getApplicationContext());
         usersp.store_userObj(usersp.getUserobj(), getApplicationContext());
 
         String user = userName.getText().toString();

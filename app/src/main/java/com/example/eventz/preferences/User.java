@@ -10,6 +10,7 @@ public class User {
     private static String Type;
     private static String userobj;
     private static String userId;
+    private static String userEmail;
     private Context context;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
@@ -51,15 +52,23 @@ public class User {
         userobj = user_obj;
     }
 
-    public String getUserId(){
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(String userid){
+    public void setUserId(String userid) {
         userId = userid;
     }
 
-    public void store_data(String Token, String userName, String Type, String userId, Context context) {
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String usremail) {
+        userEmail = usremail;
+    }
+
+    public void store_data(String Token, String userName, String Type, String userId, String email, Context context) {
         this.context = context;
         sharedPreferences = context.getSharedPreferences("UserIn", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
@@ -68,6 +77,7 @@ public class User {
         editor.putString("USERNAME", userName);
         editor.putString("USERTYPE", Type);
         editor.putString("USER_ID", userId);
+        editor.putString("USER_EMAIL", email);
         editor.apply();
 
     }
