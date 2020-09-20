@@ -31,6 +31,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,6 +56,8 @@ public class Event_infoActivity extends AppCompatActivity {
     TextView titleTV, descriptionTV, venueTV, dateTV, num_peopleTV, f_nameTV, emailTV;
     String title, description, eventDate, venue, noOfGuests, fname, email;
     String token;
+    String userType;
+    Button edit_eventBTN;
     //String URL = "http://192.168.1.103:8000/events";
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -85,10 +88,11 @@ public class Event_infoActivity extends AppCompatActivity {
         num_peopleTV = findViewById(R.id.txtview_numofpeople);
         f_nameTV = findViewById(R.id.txtview_fname);
         emailTV = findViewById(R.id.txtview_email);
+        edit_eventBTN = findViewById(R.id.button_edit_event);
 
 
         SharedPreferences sp = user.retrieveUserData(Objects.requireNonNull(getApplicationContext()));
-        //userType = sp.getString("USERTYPE", "");
+        userType = sp.getString("USERTYPE", "");
         token = sp.getString("KEY_TOKEN", "");
 
 
@@ -157,6 +161,20 @@ public class Event_infoActivity extends AppCompatActivity {
                             num_peopleTV.setText(noOfGuests);
                             f_nameTV.setText(fname);
                             emailTV.setText(email);
+                            Log.i("UTYPE", userType);
+
+                            //======================== If Organizer can Edit(2)======================
+                            if (userType.equals("2")) {
+                                Log.i("UTYPE", userType);
+                                edit_eventBTN.setVisibility(View.VISIBLE);
+                                edit_eventBTN.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Log.i("CILCK ", " Click on edit Event");
+                                        edit_eventActivity(eventId, token);
+                                    }
+                                });
+                            }
 
                         } catch (JSONException e) {
                             Log.i("JSONException", e.getMessage());
@@ -192,4 +210,8 @@ public class Event_infoActivity extends AppCompatActivity {
 
         mRequestQueueReg.add(request);
     }
+
+    private void edit_eventActivity(String eventId, String token) {
+    }
+
 }

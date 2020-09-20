@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/swiperefresh_organizer"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:showIn="@layout/app_bar_home">
+    android:layout_height="wrap_content">
 
 
     <LinearLayout
@@ -27,19 +23,40 @@
 
         <LinearLayout
             android:id="@+id/home_add_event_layout"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="center">
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
 
-<!--            <ProgressBar-->
-<!--                android:layout_width="150dp"-->
-<!--                android:layout_height="150dp"-->
-<!--                android:layout_gravity="center_vertical"-->
-<!--                android:padding="30sp" />-->
+            <ImageView
+                android:layout_width="130dp"
+                android:layout_height="130dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/icon2" />
+
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="ADD Events"/>
+                android:layout_height="wrap_content"
+                android:layout_margin="10sp"
+                android:gravity="center"
+                android:text="You Don't Have Any Event On Going"
+                android:textColor="#707070"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/button_post_event"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/background_login_two"
+                android:outlineAmbientShadowColor="#777575"
+                android:paddingLeft="48dp"
+                android:paddingRight="48dp"
+                android:text="post a Event"
+                android:textAllCaps="true"
+                android:textColor="#fff" />
 
         </LinearLayout>
 

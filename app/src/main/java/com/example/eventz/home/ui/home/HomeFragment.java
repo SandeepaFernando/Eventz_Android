@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,6 +62,7 @@ public class HomeFragment extends Fragment implements VendorAdapter.onItemClickL
     String token;
     String userType;
     String userId;
+    Button btnPostEvent;
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -85,8 +87,8 @@ public class HomeFragment extends Fragment implements VendorAdapter.onItemClickL
             mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
             requestQueue = Volley.newRequestQueue(Objects.requireNonNull(getActivity()));
             swipeRefreshLayout = root.findViewById(R.id.swiperefresh);
-            pullDownFunc();
 
+            pullDownFunc();
             getAllEvents();
 
         } else {
@@ -97,6 +99,8 @@ public class HomeFragment extends Fragment implements VendorAdapter.onItemClickL
             mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
             requestQueue = Volley.newRequestQueue(Objects.requireNonNull(getActivity()));
             swipeRefreshLayout = root.findViewById(R.id.swiperefresh_organizer);
+            btnPostEvent = root.findViewById(R.id.button_post_event);
+
             getAllEventsByOrganizer(userId);
             pullDownFuncOrganizer();
 
@@ -126,7 +130,7 @@ public class HomeFragment extends Fragment implements VendorAdapter.onItemClickL
                             Log.i("RESPONSE", response.toString());
                             Log.i("RESPONSE_Len", String.valueOf(response.length()));
                             if (response.length() == 0) {
-                                addEventAddButton();
+                                addEvents();
                                 Log.i("EMPTYJSONArray", "[]");
 
                             } else {
@@ -318,7 +322,13 @@ public class HomeFragment extends Fragment implements VendorAdapter.onItemClickL
 
     }
 
-    private void addEventAddButton() {
+    private void addEvents() {
+        btnPostEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("POST ", " Click post");
+            }
+        });
     }
 
 }
