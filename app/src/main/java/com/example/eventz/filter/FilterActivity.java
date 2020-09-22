@@ -2,6 +2,8 @@ package com.example.eventz.filter;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
@@ -17,7 +19,6 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -31,13 +32,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.eventz.R;
-import com.example.eventz.eventInfo.EventSkillAdapter;
-import com.example.eventz.eventInfo.EventSkillInfo;
-import com.example.eventz.eventInfo.Event_infoActivity;
 import com.example.eventz.preferences.User;
-import com.example.eventz.register.RegVenderScrollingActivity;
-import com.example.eventz.register.SkillAdapter;
-import com.example.eventz.register.SkillItem;
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONArray;
@@ -54,7 +49,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class FilterActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class FilterActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, FilterAdapter.onItemClickListener {
     User user = new User();
     Calendar calendar;
     DatePickerDialog pickerDialog;
@@ -65,9 +60,14 @@ public class FilterActivity extends AppCompatActivity implements AdapterView.OnI
     Boolean your_date_is_outdated;
     private RequestQueue mRequestQueue, mRequestQueueGetVendor;
     private ArrayList<String> skillIdArr;
+    private ArrayList<String> emailArray;
+    private ArrayList<String> fnameArray;
     Spinner spinner;
     String tagId;
     String token;
+    private RecyclerView mRecyclerViewFilter;
+    private FilterAdapter mFilterAdapter;
+    private ArrayList<FilterItem> mFilterList;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -83,6 +83,11 @@ public class FilterActivity extends AppCompatActivity implements AdapterView.OnI
         mRequestQueue = Volley.newRequestQueue(this);
         mRequestQueueGetVendor = Volley.newRequestQueue(this);
         skillIdArr = new ArrayList<>();
+        emailArray = new ArrayList<>();
+        fnameArray = new ArrayList<>();
+        mFilterList = new ArrayList<>();
+        mRecyclerViewFilter = findViewById(R.id.recyclerView_filter);
+        mRecyclerViewFilter.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
         SharedPreferences sp = user.retrieveUserData(Objects.requireNonNull(getApplicationContext()));
         token = sp.getString("KEY_TOKEN", "");
@@ -117,7 +122,7 @@ public class FilterActivity extends AppCompatActivity implements AdapterView.OnI
         btnFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!validateDate() | !validateminBudget()){
+                if (!validateDate()) {
                     return;
                 }
                 Log.i("CLICK", "validateted");
@@ -131,10 +136,18 @@ public class FilterActivity extends AppCompatActivity implements AdapterView.OnI
     }
 
     private void getVendors(String minBudgetInput, String date, String tagId) {
+        if (!emailArray.isEmpty() | !fnameArray.isEmpty()) {
+            emailArray.clear();
+            fnameArray.clear();
+            mFilterList.clear();
+            mFilterAdapter.notifyDataSetChanged();
+        }
+
         String end_num = getString(R.string.url_end);
         String URL = "http://192.168.1." + end_num + ":8000/filterVendors";
 
         String finalURL = URL + "?budget=" + minBudgetInput + "&tags=" + tagId + "&eventDate=" + date;
+        Log.i("FINALURL ", finalURL);
 
         final JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, finalURL, null,
                 new Response.Listener<JSONArray>() {
@@ -147,54 +160,21 @@ public class FilterActivity extends AppCompatActivity implements AdapterView.OnI
 
                             for (int j = 0; j < response.length(); j++) {
                                 JSONObject jsonObject = response.getJSONObject(j);
-                                Log.i("INSIDEOBJECR", jsonObject.toString());
-//                                String id = String.valueOf(jsonObject.getInt("id"));
-//                                title = jsonObject.getString("title");
-//                                description = jsonObject.getString("description");
-//                                eventDate = jsonObject.getString("eventDate");
-//                                venue = jsonObject.getString("venue");
-//                                noOfGuests = jsonObject.getString("noOfGuests");
-//
-//                                JSONArray tags = jsonObject.getJSONArray("eventTags");
-//                                Log.i("TAGARR", tags.toString());
-//
-//                                for (int i = 0; i < tags.length(); i++) {
-//                                    JSONObject tagObject = tags.getJSONObject(i);
-//                                    String tagName = tagObject.getString("tagName");
-//
-//                                    mSkillList.add(new EventSkillInfo(tagName));
-//                                }
-//
-//                                JSONObject organizerobj = jsonObject.getJSONObject("organizer");
-//                                fname = organizerobj.getString("first_name");
-//                                email = organizerobj.getString("email");
+
+                                String fName = jsonObject.getString("first_name");
+                                String email = jsonObject.getString("email");
+                                String location = jsonObject.getString("location");
+                                String rateCategory = jsonObject.getString("rateCategory");
+
+                                mFilterList.add(new FilterItem(fName, email, rateCategory, location));
+                                emailArray.add(email);
+                                fnameArray.add(fName);
 
                             }
 
-//                            mskillAdapter = new EventSkillAdapter(Event_infoActivity.this, mSkillList);
-//                            mRecyclerView.setAdapter(mskillAdapter);
-//
-//                            titleTV.setText(title);
-//                            descriptionTV.setText(description);
-//                            venueTV.setText(venue);
-//                            dateTV.setText(eventDate);
-//                            num_peopleTV.setText(noOfGuests);
-//                            f_nameTV.setText(fname);
-//                            emailTV.setText(email);
-//                            Log.i("UTYPE", userType);
-//
-//                            //======================== If Organizer can Edit(2)======================
-//                            if (userType.equals("2")) {
-//                                Log.i("UTYPE", userType);
-//                                edit_eventBTN.setVisibility(View.VISIBLE);
-//                                edit_eventBTN.setOnClickListener(new View.OnClickListener() {
-//                                    @Override
-//                                    public void onClick(View v) {
-//                                        Log.i("CILCK ", " Click on edit Event");
-//                                        edit_eventActivity(eventId, token);
-//                                    }
-//                                });
-//                            }
+                            mFilterAdapter = new FilterAdapter(getApplicationContext(), mFilterList);
+                            mRecyclerViewFilter.setAdapter(mFilterAdapter);
+                            FilterAdapter.setOnItemClickListener(FilterActivity.this);
 
                         } catch (JSONException e) {
                             Log.i("JSONException", e.getMessage());
@@ -322,16 +302,6 @@ public class FilterActivity extends AppCompatActivity implements AdapterView.OnI
         }
     }
 
-    private boolean validateminBudget() {
-        String minBudgetInput = textInputBudget.getEditText().getText().toString().trim();
-        if (minBudgetInput.isEmpty()) {
-            textInputBudget.setError("Field can't be empty");
-            return false;
-        } else {
-            textInputBudget.setError(null);
-            return true;
-        }
-    }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -346,4 +316,27 @@ public class FilterActivity extends AppCompatActivity implements AdapterView.OnI
 
     }
 
+    @Override
+    public void onItemClick(int position) {
+        Log.i("POSITION ", String.valueOf(position));
+        String recipientList = emailArray.get(position);
+        String[] recipients = recipientList.split(",");
+
+        String name = fnameArray.get(position);
+        String subject = "Events App - This Is About An Event";
+        String message = "Hi " + name + ",\n";
+
+        if (subject.equals("") || message.equals("")) {
+            Toast.makeText(getApplicationContext(), "Fieldes are empty!", Toast.LENGTH_SHORT).show();
+        } else {
+
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.putExtra(Intent.EXTRA_EMAIL, recipients);
+            intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+            intent.putExtra(Intent.EXTRA_TEXT, message);
+
+            intent.setType("message/rfc822");
+            startActivity(Intent.createChooser(intent, "Choose an email client"));
+        }
+    }
 }
