@@ -1,4 +1,4 @@
-package com.example.eventz.home.ui.gallery;
+package com.example.eventz.home.ui.update_profile;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -48,9 +48,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class GalleryFragment extends Fragment implements SkillAdapter.onItemClickListener {
+public class UpdateProfileFragment extends Fragment implements SkillAdapter.onItemClickListener {
 
-    private GalleryViewModel galleryViewModel;
+    private UpdateProfileViewModel updateProfileViewModel;
     View root;
 
     User user = new User();
@@ -85,8 +85,8 @@ public class GalleryFragment extends Fragment implements SkillAdapter.onItemClic
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        galleryViewModel =
-                ViewModelProviders.of(this).get(GalleryViewModel.class);
+        updateProfileViewModel =
+                ViewModelProviders.of(this).get(UpdateProfileViewModel.class);
 
         //----------------------------------------------------------------------------------------------------------------------
 
@@ -96,7 +96,7 @@ public class GalleryFragment extends Fragment implements SkillAdapter.onItemClic
         Log.i(" Update-SP", userType + " " + token);
 
         if (userType.equals("3")) {
-            root = inflater.inflate(R.layout.fragment_gallery, container, false);
+            root = inflater.inflate(R.layout.fragment_update_vendor, container, false);
 
             textInputEmail = root.findViewById(R.id.text_input_email_edit);
             textInputFName = root.findViewById(R.id.text_input_FirstName_edit);
@@ -157,7 +157,7 @@ public class GalleryFragment extends Fragment implements SkillAdapter.onItemClic
 
                 mskillAdapter = new SkillAdapter(getActivity(), mSkillList);
                 mRecyclerView.setAdapter(mskillAdapter);
-                SkillAdapter.setOnItemClickListener(GalleryFragment.this);
+                SkillAdapter.setOnItemClickListener(UpdateProfileFragment.this);
 
 
                 btnUpdate.setOnClickListener(new View.OnClickListener() {
@@ -469,7 +469,7 @@ public class GalleryFragment extends Fragment implements SkillAdapter.onItemClic
 
                             mskillAdapter = new SkillAdapter(getActivity(), mSkillList);
                             mRecyclerView.setAdapter(mskillAdapter);
-                            SkillAdapter.setOnItemClickListener(GalleryFragment.this);
+                            SkillAdapter.setOnItemClickListener(UpdateProfileFragment.this);
 
 
                         } catch (JSONException e) {
