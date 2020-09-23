@@ -140,7 +140,7 @@ public class HomeFragment extends Fragment implements VendorAdapter.onItemClickL
 
                                 for (int j = 0; j < response.length(); j++) {
                                     JSONObject jsonObject = response.getJSONObject(j);
-                                    Log.i("INSIDEOBJECR", jsonObject.toString());
+                                    //Log.i("INSIDEOBJECR", jsonObject.toString());
                                     String id = String.valueOf(jsonObject.getInt("id"));
                                     String title = jsonObject.getString("title");
                                     String venue = jsonObject.getString("venue");
@@ -266,7 +266,7 @@ public class HomeFragment extends Fragment implements VendorAdapter.onItemClickL
 
                             for (int j = 0; j < response.length(); j++) {
                                 JSONObject jsonObject = response.getJSONObject(j);
-                                Log.i("INSIDEOBJECR", jsonObject.toString());
+                                //Log.i("INSIDEOBJECR", jsonObject.toString());
                                 String id = String.valueOf(jsonObject.getInt("id"));
                                 String title = jsonObject.getString("title");
                                 String venue = jsonObject.getString("venue");
@@ -320,6 +320,7 @@ public class HomeFragment extends Fragment implements VendorAdapter.onItemClickL
         Log.i("CLICK ID", eventIdArr.get(position));
         Intent intent = new Intent(getActivity(), Event_infoActivity.class);
         intent.putExtra("eventId", eventIdArr.get(position));
+        intent.putExtra("userId", userId);
         startActivity(intent);
 
     }
