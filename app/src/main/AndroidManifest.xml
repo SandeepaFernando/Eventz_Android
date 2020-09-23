@@ -12,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".filter.FilterActivity"></activity>
+        <activity android:name=".add_events.AddEventsActivity"></activity>
+        <activity android:name=".filter.FilterActivity" />
         <activity android:name=".chatbot.ChatActivity" />
         <activity
             android:name=".eventInfo.Event_infoActivity"

@@ -12,9 +12,10 @@
             android:id="@+id/nav_gallery"
             android:icon="@drawable/ic_baseline_assignment_ind_24"
             android:title="Update Profile" />
-        <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/menu_slideshow" />
+
+<!--        <item-->
+<!--            android:id="@+id/nav_slideshow"-->
+<!--            android:icon="@drawable/ic_baseline_post_add_24"-->
+<!--            android:title="Add New Events" />-->
     </group>
 </menu>

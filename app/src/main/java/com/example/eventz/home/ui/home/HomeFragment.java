@@ -33,7 +33,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.eventz.R;
+import com.example.eventz.add_events.AddEventsActivity;
 import com.example.eventz.eventInfo.Event_infoActivity;
+import com.example.eventz.home.HomeActivity;
 import com.example.eventz.home.VendorAdapter;
 import com.example.eventz.home.VendorInfo;
 import com.example.eventz.preferences.User;
@@ -327,8 +329,11 @@ public class HomeFragment extends Fragment implements VendorAdapter.onItemClickL
             @Override
             public void onClick(View v) {
                 Log.i("POST ", " Click post");
+                Intent intent = new Intent(getActivity(), AddEventsActivity.class);
+                startActivity(intent);
             }
         });
+
     }
 
 }

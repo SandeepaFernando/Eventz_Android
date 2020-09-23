@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.eventz.R;
+import com.example.eventz.add_events.AddEventsActivity;
 import com.example.eventz.chatbot.ChatActivity;
 import com.example.eventz.eventInfo.Event_infoActivity;
 import com.example.eventz.filter.FilterActivity;
@@ -36,6 +37,7 @@ public class HomeActivity extends AppCompatActivity {
     TextView nav_userName, nav_email;
     View nView;
 
+    @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +52,7 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -82,6 +85,17 @@ public class HomeActivity extends AppCompatActivity {
         nav_email.setText(userEmail);
         Log.i("HOME-SP", userType + userName);
 
+        if (userType.equals("2")) {
+            FloatingActionButton fab_event = findViewById(R.id.fab_add_event);
+            fab_event.setVisibility(View.VISIBLE);
+            fab_event.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(HomeActivity.this, AddEventsActivity.class);
+                    startActivity(intent);
+                }
+            });
+        }
 
     }
 
