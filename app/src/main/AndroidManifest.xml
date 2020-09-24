@@ -18,7 +18,8 @@
         <activity
             android:name=".eventInfo.Event_infoActivity"
             android:label="@string/title_activity_event_info"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:windowSoftInputMode="adjustPan"
+        android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".register.RegOrganizerScrollingActivity"
             android:label="@string/title_activity_reg_organizer_scrolling"

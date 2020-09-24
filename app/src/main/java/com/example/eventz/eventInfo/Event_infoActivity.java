@@ -18,6 +18,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.eventz.MainActivity;
+import com.example.eventz.home.VendorAdapter;
 import com.example.eventz.preferences.User;
 import com.example.eventz.register.RegOrganizerScrollingActivity;
 import com.example.eventz.register.RegVenderScrollingActivity;
@@ -37,11 +38,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.eventz.R;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.iid.MessengerIpcClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -53,16 +56,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class Event_infoActivity extends AppCompatActivity {
+public class Event_infoActivity extends AppCompatActivity implements CommentAdapter.onItemClickListener {
     User user = new User();
     String eventId;
     String userId;
     private ArrayList<EventSkillInfo> mSkillList;
+    private ArrayList<CommentInfo> mCommentList;
     private RecyclerView mRecyclerView;
+    private RecyclerView mRecyclerViewComment;
     private EventSkillAdapter mskillAdapter;
+    private CommentAdapter mcommentAdapter;
     private RequestQueue mRequestQueueInfo;
     private RequestQueue mRequestQueueComment;
-    TextView titleTV, descriptionTV, venueTV, dateTV, num_peopleTV, f_nameTV, emailTV;
+    TextView titleTV, descriptionTV, venueTV, dateTV, num_peopleTV, f_nameTV, emailTV, comment_number;
     String title, description, eventDate, venue, noOfGuests, fname, email;
     String token;
     String userType;
@@ -72,8 +78,9 @@ public class Event_infoActivity extends AppCompatActivity {
     String outputjsonComment;
     private int mStatusCode = 0;
     String commentTxt;
-    //String id;
-    //String URL = "http://192.168.1.103:8000/events";
+    String commentNumber;
+    String userNameSP;
+    String userNameComment;
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
@@ -106,22 +113,31 @@ public class Event_infoActivity extends AppCompatActivity {
         edit_eventBTN = findViewById(R.id.button_edit_event);
         input_commentTv = findViewById(R.id.text_input_comment);
         post_commentBTN = findViewById(R.id.post_comment_btn);
-
+        comment_number = findViewById(R.id.comment_number);
 
         SharedPreferences sp = user.retrieveUserData(Objects.requireNonNull(getApplicationContext()));
         userType = sp.getString("USERTYPE", "");
         token = sp.getString("KEY_TOKEN", "");
+        userNameSP = sp.getString("USERNAME", "");
 
 
         mSkillList = new ArrayList<>();
         mRecyclerView = findViewById(R.id.event_skill_set);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        mCommentList = new ArrayList<>();
+        mRecyclerViewComment = findViewById(R.id.recyclerView_user_comments);
+        mRecyclerViewComment.setLayoutManager(new LinearLayoutManager(this));
+
         getEventbyid();
 
     }
 
     void getEventbyid() {
+        if (!mSkillList.isEmpty() | !mCommentList.isEmpty()) {
+            mSkillList.clear();
+            mCommentList.clear();
+        }
         mRequestQueueInfo = Volley.newRequestQueue(this);
         final Intent intent = getIntent();
         eventId = intent.getStringExtra("eventId");
@@ -166,10 +182,31 @@ public class Event_infoActivity extends AppCompatActivity {
                                 fname = organizerobj.getString("first_name");
                                 email = organizerobj.getString("email");
 
+                                JSONArray eventReviews = jsonObject.getJSONArray("eventReviews");
+                                commentNumber = String.valueOf(eventReviews.length());
+                                for (int k = 0; k < eventReviews.length(); k++) {
+                                    JSONObject commentObject = eventReviews.getJSONObject(k);
+                                    String commentStr = commentObject.getString("comment");
+                                    String commentDate = commentObject.getString("commentedOn");
+
+                                    JSONObject commentedByOBJ = commentObject.getJSONObject("commentedBy");
+                                    String commentName = commentedByOBJ.getString("first_name");
+                                    userNameComment = commentedByOBJ.getString("username");
+
+                                    mCommentList.add(new CommentInfo(commentName, commentDate, commentStr, userNameSP, userNameComment));
+                                    Log.i("XXXXXXXXXXXXXXXXX", userNameSP + "===" + userNameComment);
+
+                                }
+
                             }
 
                             mskillAdapter = new EventSkillAdapter(Event_infoActivity.this, mSkillList);
                             mRecyclerView.setAdapter(mskillAdapter);
+
+                            mcommentAdapter = new CommentAdapter(Event_infoActivity.this, mCommentList);
+                            mRecyclerViewComment.setAdapter(mcommentAdapter);
+                            CommentAdapter.setOnItemClickListener(Event_infoActivity.this);
+
 
                             titleTV.setText(title);
                             descriptionTV.setText(description);
@@ -178,6 +215,7 @@ public class Event_infoActivity extends AppCompatActivity {
                             num_peopleTV.setText(noOfGuests);
                             f_nameTV.setText(fname);
                             emailTV.setText(email);
+                            comment_number.setText("(" + commentNumber + ")");
                             Log.i("UTYPE", userType);
 
                             //======================== If Organizer can Edit(2)======================
@@ -188,7 +226,7 @@ public class Event_infoActivity extends AppCompatActivity {
                                     @Override
                                     public void onClick(View v) {
                                         Log.i("CILCK ", " Click on edit Event");
-                                        edit_eventActivity(eventId, token);
+                                        edit_event(eventId, token);
                                     }
                                 });
                             }
@@ -263,6 +301,7 @@ public class Event_infoActivity extends AppCompatActivity {
 
                                         if (mStatusCode == 201) {
                                             Toast.makeText(Event_infoActivity.this, "Posted.", Toast.LENGTH_LONG).show();
+                                            getEventbyid();
                                         }
 
                                     } catch (JSONException e) {
@@ -318,8 +357,16 @@ public class Event_infoActivity extends AppCompatActivity {
 
     }
 
-
-    private void edit_eventActivity(String eventId, String token) {
+    private void edit_event(String eventId, String token) {
     }
 
+    @Override
+    public void onItemClick(int position) {
+        Log.i("CLICK ", "Click Delete" + position);
+    }
+
+    @Override
+    public void onItemClickEdit(int position) {
+        Log.i("CLICK ", "Click Edit" + position);
+    }
 }

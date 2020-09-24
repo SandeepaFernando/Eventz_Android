@@ -242,15 +242,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="35dp"
                 android:layout_marginLeft="20dp"
-                android:hint="Comments "
-                android:textStyle="normal" />
+                android:text="Comments"
+                android:textColor="@android:color/black"
+                android:textSize="15dp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/comment_number"
                 android:layout_width="wrap_content"
                 android:layout_height="35dp"
-                android:hint="number"
-                android:textStyle="normal" />
+                android:hint="#"
+                android:textColor="@android:color/black"
+                android:textSize="15dp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 
