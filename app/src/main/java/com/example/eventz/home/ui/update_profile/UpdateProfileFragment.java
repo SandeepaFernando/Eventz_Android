@@ -248,8 +248,8 @@ public class UpdateProfileFragment extends Fragment implements SkillAdapter.onIt
         outputjson = json2.toString();
         Log.i("OUTJSON", outputjson);
 
-        String end_num = getString(R.string.url_end);
-        String URL_REG = "http://192.168.1." + end_num + ":8000/updateOrganizer";
+        String url = getString(R.string.ip);
+        String URL_REG = url + "updateOrganizer";
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, URL_REG, null,
                 new Response.Listener<JSONObject>() {
                     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -362,8 +362,8 @@ public class UpdateProfileFragment extends Fragment implements SkillAdapter.onIt
         outputjson = json2.toString();
         Log.i("OUTJSON", outputjson);
 
-        String end_num = getString(R.string.url_end);
-        String URL_REG = "http://192.168.1." + end_num + ":8000/updateVendor";
+        String url = getString(R.string.ip);
+        String URL_REG = url + "updateVendor";
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, URL_REG, null,
                 new Response.Listener<JSONObject>() {
                     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -439,8 +439,8 @@ public class UpdateProfileFragment extends Fragment implements SkillAdapter.onIt
         skillNameArr.clear();
         mSkillList.clear();
 
-        String end_num = getString(R.string.url_end);
-        String URL = "http://192.168.1." + end_num + ":8000/getTags";
+        String url = getString(R.string.ip);
+        String URL = url + "getTags";
 
         final JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, URL, null,
                 new Response.Listener<JSONArray>() {

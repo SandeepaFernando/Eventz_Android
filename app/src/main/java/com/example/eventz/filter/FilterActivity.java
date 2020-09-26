@@ -143,8 +143,8 @@ public class FilterActivity extends AppCompatActivity implements AdapterView.OnI
             mFilterAdapter.notifyDataSetChanged();
         }
 
-        String end_num = getString(R.string.url_end);
-        String URL = "http://192.168.1." + end_num + ":8000/filterVendors";
+        String url = getString(R.string.ip);
+        String URL = url + "filterVendors";
 
         String finalURL = URL + "?budget=" + minBudgetInput + "&tags=" + tagId + "&eventDate=" + date;
         Log.i("FINALURL ", finalURL);
@@ -212,8 +212,8 @@ public class FilterActivity extends AppCompatActivity implements AdapterView.OnI
     }
 
     void fillSkillData() {
-        String end_num = getString(R.string.url_end);
-        String URL = "http://192.168.1." + end_num + ":8000/getTags";
+        String url = getString(R.string.ip);
+        String URL = url + "getTags";
 
         final JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, URL, null,
                 new Response.Listener<JSONArray>() {

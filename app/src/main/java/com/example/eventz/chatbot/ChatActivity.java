@@ -110,8 +110,8 @@ public class ChatActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void chat(String text) {
-        String end_num = getString(R.string.url_end);
-        String URL = "http://192.168.1." + end_num + ":8000/chat?text=" + text;
+        String url = getString(R.string.ip);
+        String URL = url + "chat?text=" + text;
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, URL, null,
                 new Response.Listener<JSONObject>() {
                     @RequiresApi(api = Build.VERSION_CODES.KITKAT)

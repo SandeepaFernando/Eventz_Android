@@ -120,8 +120,8 @@ public class HomeFragment extends Fragment implements VendorAdapter.onItemClickL
             eventIdArr.clear();
         }
 
-        String end_num = getString(R.string.url_end);
-        String URL = "http://192.168.1." + end_num + ":8000/events?organizerId=" + userId;
+        String url = getString(R.string.ip);
+        String URL = url + "events?organizerId=" + userId;
         final JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, URL, null,
                 new Response.Listener<JSONArray>() {
                     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -253,8 +253,8 @@ public class HomeFragment extends Fragment implements VendorAdapter.onItemClickL
             eventIdArr.clear();
         }
 
-        String end_num = getString(R.string.url_end);
-        String URL = "http://192.168.1." + end_num + ":8000/events";
+        String url = getString(R.string.ip);
+        String URL = url + "events";
         final JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, URL, null,
                 new Response.Listener<JSONArray>() {
                     @RequiresApi(api = Build.VERSION_CODES.KITKAT)

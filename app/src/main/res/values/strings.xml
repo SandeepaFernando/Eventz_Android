@@ -105,7 +105,11 @@
     </string>
     <string name="title_activity_reg_organizer_scrolling">ScrollingActivity</string>
     <string name="title_activity_event_info">ScrollingActivity</string>
-    <string name="url_end">100</string>
+
+
+    <string name="ip">http://192.168.1.100:8000/</string>
+
+
     <string name="title_activity_chat">ChatActivity</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>

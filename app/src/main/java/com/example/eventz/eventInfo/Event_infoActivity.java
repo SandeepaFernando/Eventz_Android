@@ -144,8 +144,8 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
         userId = intent.getStringExtra("userId");
         Log.i("EXTRASITE_ID", eventId);
 
-        String end_num = getString(R.string.url_end);
-        String URL = "http://192.168.1." + end_num + ":8000/events";
+        String url = getString(R.string.ip);
+        String URL = url + "events";
 
         String finalURL = URL + "?eventId=" + eventId;
 
@@ -287,8 +287,8 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
                     Log.i("Commnet Json - ", outputjsonComment);
 
                     mRequestQueueComment = Volley.newRequestQueue(getApplicationContext());
-                    String end_num = getString(R.string.url_end);
-                    String URL = "http://192.168.1." + end_num + ":8000/eventComment";
+                    String url = getString(R.string.ip);
+                    String URL = url + "eventComment";
                     JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, null,
                             new Response.Listener<JSONObject>() {
                                 @Override
@@ -362,11 +362,13 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
 
     @Override
     public void onItemClick(int position) {
+        //This is Delete
         Log.i("CLICK ", "Click Delete" + position);
     }
 
     @Override
     public void onItemClickEdit(int position) {
+        //This is Edit
         Log.i("CLICK ", "Click Edit" + position);
     }
 }

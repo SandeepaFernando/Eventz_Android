@@ -99,9 +99,8 @@ public class RegOrganizerScrollingActivity extends AppCompatActivity {
         outputjson = jsonUserOBJ.toString();
         Log.i("OUTJSON", outputjson);
 
-        //String res;
-        String end_num = getString(R.string.url_end);
-        String URL_REG = "http://192.168.1." + end_num + ":8000/register";
+        String url = getString(R.string.ip);
+        String URL_REG = url + "register";
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL_REG, null,
                 new Response.Listener<JSONObject>() {
                     @Override

@@ -167,8 +167,8 @@ public class MainActivity extends AppCompatActivity {
 
         requestQueue = Volley.newRequestQueue(getApplicationContext());
 
-        String end_num = getString(R.string.url_end);
-        String URL = "http://192.168.1." + end_num + ":8000/login";
+        String url = getString(R.string.ip);
+        String URL = url + "login";
 
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, null,
                 new Response.Listener<JSONObject>() {
@@ -183,7 +183,6 @@ public class MainActivity extends AppCompatActivity {
                             if (token != null) {
                                 Log.i("TOKEN", token);
                                 usersp.setToken(token);
-
 
                                 JSONObject user = response.getJSONObject("user");
                                 usersp.setUserobj(user.toString());
