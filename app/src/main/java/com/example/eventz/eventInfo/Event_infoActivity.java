@@ -62,6 +62,7 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
     String userId;
     private ArrayList<EventSkillInfo> mSkillList;
     private ArrayList<CommentInfo> mCommentList;
+    private ArrayList<String> commentIdList;
     private RecyclerView mRecyclerView;
     private RecyclerView mRecyclerViewComment;
     private EventSkillAdapter mskillAdapter;
@@ -119,7 +120,7 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
         userType = sp.getString("USERTYPE", "");
         token = sp.getString("KEY_TOKEN", "");
         userNameSP = sp.getString("USERNAME", "");
-
+        commentIdList =  new ArrayList<>();
 
         mSkillList = new ArrayList<>();
         mRecyclerView = findViewById(R.id.event_skill_set);
@@ -181,6 +182,8 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
                                 JSONObject organizerobj = jsonObject.getJSONObject("organizer");
                                 fname = organizerobj.getString("first_name");
                                 email = organizerobj.getString("email");
+
+                                //-----------------comment-----------------
 
                                 JSONArray eventReviews = jsonObject.getJSONArray("eventReviews");
                                 commentNumber = String.valueOf(eventReviews.length());
