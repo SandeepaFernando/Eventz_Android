@@ -17,6 +17,8 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -65,8 +67,10 @@ public class AddEventsActivity extends AppCompatActivity implements SkillAdapter
     private TextInputLayout textInputDateLayout;
     private EditText textInputDate;
     Button btn_skillPredict;
+    Button btn_numOfVendors;
     private RequestQueue mRequestQueuePredict;
     private RequestQueue mRequestQueueaddSkills;
+    private RequestQueue mRequestQueueNumOfVendors;
     private ArrayList<SkillItemAddEvent> mSkillList;
     private ArrayList<SkillItemAddEvent> mSkillListAdd;
     private RecyclerView mRecyclerViewPredict;
@@ -74,10 +78,16 @@ public class AddEventsActivity extends AppCompatActivity implements SkillAdapter
     private SkillAdapterAddEvent mskillAdapter;
     private ArrayList<String> skillIdArr;
     private ArrayList<String> skillNameArr;
+    private ArrayList<String> categoryArr;
     LinearLayout linearLayout_predict;
+    LinearLayout linearLayout_numOfVendors;
     ImageView addSkillsImg;
+    ImageView clearnNmViewImg;
     Calendar calendar;
     DatePickerDialog pickerDialog;
+    TextView numPlattinum;
+    TextView numGold;
+    TextView numSilver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,11 +108,17 @@ public class AddEventsActivity extends AppCompatActivity implements SkillAdapter
         textInputAddBudget = findViewById(R.id.text_input_eventBudget_add_event);
         textInputDateLayout = findViewById(R.id.text_input_date_add_event);
         linearLayout_predict = findViewById(R.id.predicted_skills_layout);
+        linearLayout_numOfVendors = findViewById(R.id.num_of_vendor_skills_layout);
         addSkillsImg = findViewById(R.id.img_add_skills_addevent);
         textInputDate = findViewById(R.id.text_input_pick_date_add_event);
         textInputDate.setFocusableInTouchMode(false);
+        numPlattinum = findViewById(R.id.txt_num_of_plattinum);
+        numGold = findViewById(R.id.txt_num_of_gold);
+        numSilver = findViewById(R.id.txt_num_of_silver);
+        clearnNmViewImg = findViewById(R.id.img_clear_all_num_view);
 
         btn_skillPredict = findViewById(R.id.btn_predict_skills);
+        btn_numOfVendors = findViewById(R.id.btn_num_of_vendors);
 
         mRequestQueuePredict = Volley.newRequestQueue(this);
         mRecyclerViewPredict = findViewById(R.id.recyclerView__skill_predict);
@@ -112,10 +128,14 @@ public class AddEventsActivity extends AppCompatActivity implements SkillAdapter
         mRecyclerViewAddSkills = findViewById(R.id.recyclerViewSkill_add_event);
         mRecyclerViewAddSkills.setLayoutManager(new LinearLayoutManager(this));
 
+        mRequestQueueNumOfVendors = Volley.newRequestQueue(this);
+
         mSkillList = new ArrayList<>();
         mSkillListAdd = new ArrayList<>();
         skillIdArr = new ArrayList<>();
         skillNameArr = new ArrayList<>();
+        categoryArr = new ArrayList<>();
+
 
         textInputDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -168,6 +188,27 @@ public class AddEventsActivity extends AppCompatActivity implements SkillAdapter
                     skillIdArr.clear();
                     skillNameArr.clear();
                 }
+            }
+        });
+
+        btn_numOfVendors.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (validateminBudget() && !skillIdArr.isEmpty()) {
+                    getNumOfVendors();
+
+                } else
+                    Toast.makeText(AddEventsActivity.this, "Please Provide Budget and Skills!", Toast.LENGTH_LONG).show();
+
+
+            }
+        });
+
+        clearnNmViewImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //clear num of vendor view
+                linearLayout_numOfVendors.setVisibility(View.GONE);
             }
         });
 
@@ -267,9 +308,9 @@ public class AddEventsActivity extends AppCompatActivity implements SkillAdapter
             skillNameArr.clear();
         }
 
-        String minBudgetInput = textInputDescription.getEditText().getText().toString().trim();
+        String description = textInputDescription.getEditText().getText().toString().trim();
         String url = getString(R.string.ip);
-        String URL = url + "predictTags?text=" + minBudgetInput;
+        String URL = url + "predictTags?text=" + description;
 
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, URL, null,
                 new Response.Listener<JSONObject>() {
@@ -411,12 +452,119 @@ public class AddEventsActivity extends AppCompatActivity implements SkillAdapter
         mRequestQueueaddSkills.add(request);
     }
 
+    private void getNumOfVendors() {
+        if (!categoryArr.isEmpty()) {
+            categoryArr.clear();
+        }
+
+        String minBudgetInput = textInputAddBudget.getEditText().getText().toString().trim();
+        String tagString = skillIdArr.toString();
+        String tags = tagString.replaceAll("[\\[\\]() ]", "");
+        String url = getString(R.string.ip);
+        String URL = url + "getVendorsByBudgetAndTags?budget=" + minBudgetInput + "&tags=" + tags.trim();
+
+        final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, URL, null,
+                new Response.Listener<JSONObject>() {
+                    @SuppressLint("SetTextI18n")
+                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+
+                            Log.i("RESPONSE", response.toString());
+
+                            JSONArray result = response.getJSONArray("result");
+
+                            for (int j = 0; j < result.length(); j++) {
+                                JSONObject jsonObject = result.getJSONObject(j);
+                                Log.i("INSIDEOBJECR", jsonObject.toString());
+                                String num = String.valueOf(jsonObject.getInt("numberOfVendors"));
+                                String category = jsonObject.getString("rateCategory");
+
+                                categoryArr.add(category);
+
+                                switch (category) {
+                                    case "Platinum":
+                                        numPlattinum.setText(num + " Vendors");
+                                        break;
+
+                                    case "Gold":
+                                        numGold.setText(num + " Vendors");
+                                        break;
+
+                                    case "Silver":
+                                        numSilver.setText(num + " Vendors");
+                                        break;
+                                }
+
+                            }
+
+                            if (!categoryArr.contains("Platinum")) {
+                                numPlattinum.setText("0" + " Vendors");
+
+                            } else if (!categoryArr.contains("Gold")) {
+                                numGold.setText("0" + " Vendors");
+
+                            } else if (!categoryArr.contains("Silver")) {
+                                numSilver.setText("0" + " Vendors");
+
+                            }
+
+                            // set visible
+                            linearLayout_numOfVendors.setVisibility(View.VISIBLE);
+
+                            if (result.length() == 0) {
+                                // if empty set visible gone
+                                linearLayout_numOfVendors.setVisibility(View.GONE);
+                                Toast.makeText(getApplicationContext(), "No Results Found", Toast.LENGTH_LONG).show();
+                            }
+
+                        } catch (JSONException e) {
+                            Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_LONG).show();
+
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (error.networkResponse == null) {
+                    if (error.getClass().equals(TimeoutError.class)) {
+                        Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.v("VOLLEY", error.toString());
+                    }
+                }
+
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Authorization", "Token " + token);
+
+                return params;
+            }
+        };
+
+        int socketTimeout = 500000;//30 seconds - change to what you want
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        request.setRetryPolicy(policy);
+
+        mRequestQueueNumOfVendors.add(request);
+    }
+
 
     @Override
     public void onItemClick(int position) {
         Log.i("POSITION", String.valueOf(position));
-        mSkillList.remove(position);
-        mskillAdapter.notifyItemRemoved(position);
+        if (!mSkillList.isEmpty()) {
+            mSkillList.remove(position);
+            mskillAdapter.notifyItemRemoved(position);
+        }
+
+        if (!mSkillListAdd.isEmpty()) {
+            mSkillListAdd.remove(position);
+            mskillAdapter.notifyItemRemoved(position);
+        }
         skillIdArr.remove(position);
         skillNameArr.remove(position);
 

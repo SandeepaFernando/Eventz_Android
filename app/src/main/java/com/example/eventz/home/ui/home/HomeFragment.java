@@ -61,6 +61,7 @@ public class HomeFragment extends Fragment implements VendorAdapter.onItemClickL
     private VendorAdapter mvendorAdapter;
     private ArrayList<VendorInfo> mevnetList;
     private ArrayList<String> eventIdArr;
+    LinearLayout emptyHome;
     String token;
     String userType;
     String userId;
@@ -102,6 +103,7 @@ public class HomeFragment extends Fragment implements VendorAdapter.onItemClickL
             requestQueue = Volley.newRequestQueue(Objects.requireNonNull(getActivity()));
             swipeRefreshLayout = root.findViewById(R.id.swiperefresh_organizer);
             btnPostEvent = root.findViewById(R.id.button_post_event);
+            emptyHome = root.findViewById(R.id.recycler_view_home);
 
             getAllEventsByOrganizer(userId);
             pullDownFuncOrganizer();
@@ -154,6 +156,7 @@ public class HomeFragment extends Fragment implements VendorAdapter.onItemClickL
                                 mvendorAdapter = new VendorAdapter(getActivity(), mevnetList);
                                 mRecyclerView.setAdapter(mvendorAdapter);
                                 VendorAdapter.setOnItemClickListener(HomeFragment.this);
+                                emptyHome.setVisibility(View.VISIBLE);
 
                                 RecyclerView home_main = root.findViewById(R.id.recycler_view_organizer_home);
                                 home_main.setVisibility(View.VISIBLE);

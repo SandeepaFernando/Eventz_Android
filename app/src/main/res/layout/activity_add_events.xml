@@ -154,15 +154,94 @@
             android:layout_marginRight="15dp"
             android:text="Get Number of vendors" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView_get_num_of_vendor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_marginTop="20dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="10dp"
-            android:padding="4dp" />
+        <LinearLayout
+            android:id="@+id/num_of_vendor_skills_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#EAE8E4"
+            android:orientation="vertical"
+            android:scrollbars="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="These are the Vendors according to your budget and skills that you mentioned" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_gravity="center"
+                    android:paddingBottom="10dp"
+                    android:src="@drawable/plattinum_icon" />
+
+                <TextView
+                    android:id="@+id/txt_num_of_plattinum"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:paddingLeft="20dp"
+                    android:text="Num" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_gravity="center"
+                    android:paddingBottom="10dp"
+                    android:src="@drawable/gold_icon" />
+
+                <TextView
+                    android:id="@+id/txt_num_of_gold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:paddingLeft="20dp"
+                    android:text="Num" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_gravity="center"
+                    android:paddingBottom="10dp"
+                    android:src="@drawable/silver_icon" />
+
+                <TextView
+                    android:id="@+id/txt_num_of_silver"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:paddingLeft="20dp"
+                    android:text="Num" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/img_clear_all_num_view"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_baseline_clear_all_24" />
+
+        </LinearLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/text_input_date_add_event"
