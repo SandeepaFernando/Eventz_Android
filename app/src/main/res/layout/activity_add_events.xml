@@ -27,7 +27,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/_input_description_add_event"
+            android:id="@+id/input_description_add_event"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:errorEnabled="true">
@@ -52,10 +52,12 @@
             android:text="Get Skills" />
 
         <LinearLayout
+            android:id="@+id/predicted_skills_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:scrollbars="horizontal">
+            android:scrollbars="horizontal"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="match_parent"
@@ -68,8 +70,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="4dp"
-                android:paddingBottom="20dp"
-                android:scrollbars="vertical" />
+                android:paddingBottom="20dp" />
 
         </LinearLayout>
 
@@ -98,13 +99,12 @@
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView__add_event"
+            android:id="@+id/recyclerViewSkill_add_event"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
-            android:padding="4dp"
-            android:scrollbars="vertical" />
+            android:padding="4dp" />
 
 
         <com.google.android.material.textfield.TextInputLayout
@@ -154,6 +154,15 @@
             android:layout_marginRight="15dp"
             android:text="Get Number of vendors" />
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView_get_num_of_vendor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:padding="4dp" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/text_input_date_add_event"
@@ -185,8 +194,6 @@
             android:textAllCaps="true"
             android:textColor="#fff" />
 
-
     </LinearLayout>
-
 
 </ScrollView>
