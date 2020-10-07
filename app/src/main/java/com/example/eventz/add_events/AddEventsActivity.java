@@ -7,6 +7,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,12 +19,13 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -32,18 +35,16 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.eventz.MainActivity;
 import com.example.eventz.R;
-import com.example.eventz.filter.FilterActivity;
 import com.example.eventz.preferences.User;
-import com.example.eventz.register.RegVenderScrollingActivity;
-import com.example.eventz.register.SkillAdapter;
-import com.example.eventz.register.SkillItem;
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,26 +52,29 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class AddEventsActivity extends AppCompatActivity implements SkillAdapterAddEvent.onItemClickListener {
     User user = new User();
     String token;
     String userType;
     String userId;
-    boolean your_date_is_outdated;
+    Boolean your_date_is_outdated;
     private TextInputLayout textInputTitle;
     private TextInputLayout textInputDescription;
     private TextInputLayout textInputVenue;
     private TextInputLayout textInputNumOfGust;
     private TextInputLayout textInputAddBudget;
     private TextInputLayout textInputDateLayout;
+    private TextInputLayout textInputTimeLayout;
     private EditText textInputDate;
+    private EditText textInputTime;
     Button btn_skillPredict;
     Button btn_numOfVendors;
+    Button btn_post;
     private RequestQueue mRequestQueuePredict;
     private RequestQueue mRequestQueueaddSkills;
     private RequestQueue mRequestQueueNumOfVendors;
+    private RequestQueue mRequestQueuePost;
     private ArrayList<SkillItemAddEvent> mSkillList;
     private ArrayList<SkillItemAddEvent> mSkillListAdd;
     private RecyclerView mRecyclerViewPredict;
@@ -85,9 +89,12 @@ public class AddEventsActivity extends AppCompatActivity implements SkillAdapter
     ImageView clearnNmViewImg;
     Calendar calendar;
     DatePickerDialog pickerDialog;
+    TimePickerDialog timePickerDialog;
     TextView numPlattinum;
     TextView numGold;
     TextView numSilver;
+    private int mStatusCode = 0;
+    String dateIn_IN;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,11 +114,14 @@ public class AddEventsActivity extends AppCompatActivity implements SkillAdapter
         textInputNumOfGust = findViewById(R.id.text_input_noOfGuests_add_event);
         textInputAddBudget = findViewById(R.id.text_input_eventBudget_add_event);
         textInputDateLayout = findViewById(R.id.text_input_date_add_event);
+        textInputTimeLayout = findViewById(R.id.text_input_time_add_event);
         linearLayout_predict = findViewById(R.id.predicted_skills_layout);
         linearLayout_numOfVendors = findViewById(R.id.num_of_vendor_skills_layout);
         addSkillsImg = findViewById(R.id.img_add_skills_addevent);
         textInputDate = findViewById(R.id.text_input_pick_date_add_event);
         textInputDate.setFocusableInTouchMode(false);
+        textInputTime = findViewById(R.id.text_input_pick_time_add_event);
+        textInputTime.setFocusableInTouchMode(false);
         numPlattinum = findViewById(R.id.txt_num_of_plattinum);
         numGold = findViewById(R.id.txt_num_of_gold);
         numSilver = findViewById(R.id.txt_num_of_silver);
@@ -119,6 +129,7 @@ public class AddEventsActivity extends AppCompatActivity implements SkillAdapter
 
         btn_skillPredict = findViewById(R.id.btn_predict_skills);
         btn_numOfVendors = findViewById(R.id.btn_num_of_vendors);
+        btn_post = findViewById(R.id.button_post_event_now);
 
         mRequestQueuePredict = Volley.newRequestQueue(this);
         mRecyclerViewPredict = findViewById(R.id.recyclerView__skill_predict);
@@ -129,6 +140,7 @@ public class AddEventsActivity extends AppCompatActivity implements SkillAdapter
         mRecyclerViewAddSkills.setLayoutManager(new LinearLayoutManager(this));
 
         mRequestQueueNumOfVendors = Volley.newRequestQueue(this);
+        mRequestQueuePost = Volley.newRequestQueue(this);
 
         mSkillList = new ArrayList<>();
         mSkillListAdd = new ArrayList<>();
@@ -151,11 +163,30 @@ public class AddEventsActivity extends AppCompatActivity implements SkillAdapter
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         month = month + 1;
-                        textInputDate.setText(dayOfMonth + "/" + month + "/" + year);
+                        textInputDate.setText(year + "-" + month + "-" + dayOfMonth);
+                        dateIn_IN = dayOfMonth + "/" + month + "/" + year;
                     }
                 }, day, month, year);
                 pickerDialog.updateDate(year, month, day);
                 pickerDialog.show();
+            }
+        });
+
+        textInputTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calendar = Calendar.getInstance();
+                int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                int minute = calendar.get(Calendar.MINUTE);
+
+                timePickerDialog = new TimePickerDialog(AddEventsActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        textInputTime.setText(hourOfDay + ":" + minute);
+                    }
+                }, hour, minute, false);
+                timePickerDialog.updateTime(hour, minute);
+                timePickerDialog.show();
             }
         });
 
@@ -212,17 +243,120 @@ public class AddEventsActivity extends AppCompatActivity implements SkillAdapter
             }
         });
 
+        btn_post.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (validateminBudget() && !skillIdArr.isEmpty() && validateDescription() && validateDate() && validateNumOfGuest() && validateTitle() && validateVenue() && validateTime()) {
+                    postAdd();
+                    Log.i("POS--", " POSTED");
+                }
+                if (!validateminBudget() | !validateDescription() | !validateDate() | !validateNumOfGuest() | !validateTitle() | !validateVenue() | validateTime()) {
+                    return;
+                }
+            }
+        });
 
+    }
+
+    private void postAdd() {
+        Log.i("TAG-POS - ", "IN POST");
+        JSONArray jsonSkillArray = new JSONArray();
+        JSONObject json2 = new JSONObject();
+        final String outputjson;
+
+        try {
+            for (int i = 0; i < skillIdArr.size(); i++) {
+                JSONObject json1 = new JSONObject();
+                json1.put("tagId", skillIdArr.get(i));
+                jsonSkillArray.put(json1);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        try {
+            json2.put("title", textInputTitle.getEditText().getText().toString());
+            json2.put("description", textInputDescription.getEditText().getText().toString());
+            json2.put("eventDate", textInputDate.getText().toString() + " " + textInputTime.getText().toString());
+            json2.put("venue", textInputVenue.getEditText().getText().toString());
+            json2.put("noOfGuests", textInputNumOfGust.getEditText().getText().toString());
+            json2.put("organizer", userId);
+            json2.put("eventBudget", textInputAddBudget.getEditText().getText().toString());
+            json2.put("eventTags", jsonSkillArray);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        outputjson = json2.toString();
+        Log.i("OUTJSON", outputjson);
+
+        String url = getString(R.string.ip);
+        String URL_REG = url + "events";
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL_REG, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.i("RESPONS", response.toString());
+                        if (mStatusCode == 201) {
+                            Intent intent = new Intent(AddEventsActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            finish();
+
+                            Toast.makeText(AddEventsActivity.this, "Event Successfully Posted..", Toast.LENGTH_LONG).show();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println(error.getMessage());
+                Toast.makeText(AddEventsActivity.this, "Check your connectivity", Toast.LENGTH_LONG).show();
+            }
+        }) {
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+            @Override
+            public byte[] getBody() {
+                return outputjson == null ? null : outputjson.getBytes(Charset.forName("UTF-8"));
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Authorization", "Token " + token);
+
+                return params;
+            }
+
+            @Override
+            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+                if (response != null) {
+                    mStatusCode = response.statusCode;
+                }
+                return super.parseNetworkResponse(response);
+            }
+
+        };
+
+        int socketTimeout = 500000;//30 seconds - change to what you want
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        request.setRetryPolicy(policy);
+
+        mRequestQueuePost.add(request);
     }
 
 
     private boolean validateDate() {
-        String date = textInputDate.toString().trim();
+        String date = textInputDate.getText().toString().trim();
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         try {
-            Date strDate = sdf.parse(date);
+            Date strDate = sdf.parse(dateIn_IN);
+            Log.i("STARTDATE - ", strDate.toString());
             if (new Date().after(strDate)) {
                 your_date_is_outdated = true;
+                Log.i("new Date() - ", new Date().toString());
             } else {
                 your_date_is_outdated = false;
             }
@@ -243,6 +377,18 @@ public class AddEventsActivity extends AppCompatActivity implements SkillAdapter
             return true;
         }
     }
+
+    private boolean validateTime() {
+        String minBudgetInput = textInputTime.getText().toString().trim();
+        if (minBudgetInput.isEmpty()) {
+            textInputTimeLayout.setError("Field can't be empty");
+            return false;
+        } else {
+            textInputTimeLayout.setError(null);
+            return true;
+        }
+    }
+
 
     private boolean validateminBudget() {
         String minBudgetInput = textInputAddBudget.getEditText().getText().toString().trim();
