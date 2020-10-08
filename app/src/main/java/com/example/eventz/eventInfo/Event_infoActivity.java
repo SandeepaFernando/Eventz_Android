@@ -18,12 +18,14 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.eventz.MainActivity;
+import com.example.eventz.home.HomeActivity;
 import com.example.eventz.home.VendorAdapter;
 import com.example.eventz.preferences.User;
 import com.example.eventz.register.RegOrganizerScrollingActivity;
 import com.example.eventz.register.RegVenderScrollingActivity;
 import com.example.eventz.register.SkillAdapter;
 import com.example.eventz.register.SkillItem;
+import com.example.eventz.updateEvent.UpdateEvents;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -120,7 +122,7 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
         userType = sp.getString("USERTYPE", "");
         token = sp.getString("KEY_TOKEN", "");
         userNameSP = sp.getString("USERNAME", "");
-        commentIdList =  new ArrayList<>();
+        commentIdList = new ArrayList<>();
 
         mSkillList = new ArrayList<>();
         mRecyclerView = findViewById(R.id.event_skill_set);
@@ -229,7 +231,7 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
                                     @Override
                                     public void onClick(View v) {
                                         Log.i("CILCK ", " Click on edit Event");
-                                        edit_event(eventId, token);
+                                        edit_event(eventId);
                                     }
                                 });
                             }
@@ -360,7 +362,10 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
 
     }
 
-    private void edit_event(String eventId, String token) {
+    private void edit_event(String eventId) {
+        Intent intent = new Intent(Event_infoActivity.this, UpdateEvents.class);
+        intent.putExtra("EVENTID", eventId);
+        startActivity(intent);
     }
 
     @Override

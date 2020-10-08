@@ -12,14 +12,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".add_events.AddEventsActivity"></activity>
+        <activity android:name=".updateEvent.UpdateEvents"></activity>
+        <activity android:name=".add_events.AddEventsActivity" />
         <activity android:name=".filter.FilterActivity" />
         <activity android:name=".chatbot.ChatActivity" />
         <activity
             android:name=".eventInfo.Event_infoActivity"
             android:label="@string/title_activity_event_info"
-            android:windowSoftInputMode="adjustPan"
-        android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".register.RegOrganizerScrollingActivity"
             android:label="@string/title_activity_reg_organizer_scrolling"
