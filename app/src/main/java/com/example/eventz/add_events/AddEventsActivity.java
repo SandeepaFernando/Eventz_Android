@@ -298,8 +298,8 @@ public class AddEventsActivity extends AppCompatActivity implements SkillAdapter
                         Log.i("RESPONS", response.toString());
                         if (mStatusCode == 201) {
                             Intent intent = new Intent(AddEventsActivity.this, MainActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
-                            finish();
 
                             Toast.makeText(AddEventsActivity.this, "Event Successfully Posted..", Toast.LENGTH_LONG).show();
                         }
