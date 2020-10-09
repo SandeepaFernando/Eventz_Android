@@ -6,35 +6,35 @@
     android:layout_height="match_parent"
     android:paddingLeft="18dp"
     android:paddingRight="18dp"
-    android:background="@drawable/background">
+    android:background="@drawable/bg_event">
 
     <EditText
         android:id="@+id/editTextUsername"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
-        android:background="#6ef4f4f4"
+        android:background="#FBF3A6"
         android:drawableLeft="@drawable/ic_person_white_24dp"
         android:drawablePadding="78dp"
         android:ems="1"
         android:hint="User Name"
         android:inputType="textEmailAddress"
         android:padding="16dp"
-        android:textColorHint="#fff" />
+        android:textColorHint="#0B0909" />
 
     <EditText
         android:id="@+id/editTextPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
-        android:background="#6ef4f4f4"
+        android:background="#FBF3A6"
         android:drawableLeft="@drawable/ic_lock_white_24dp"
         android:drawablePadding="78dp"
         android:ems="1"
         android:hint="......"
         android:inputType="textPassword"
         android:padding="16dp"
-        android:textColorHint="#fff" />
+        android:textColorHint="#0B0909" />
 
     <Button
         android:id="@+id/button"
@@ -55,7 +55,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="left"
         android:layout_marginTop="50dp"
-        android:textColor="#fff"
+        android:textColor="#0B0909"
         android:textSize="18dp"
         android:text="New to Events platform, Click Register Now!"
         android:textAlignment="center"
