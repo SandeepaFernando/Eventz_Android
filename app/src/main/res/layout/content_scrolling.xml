@@ -185,19 +185,19 @@
 
         </LinearLayout>
 
-        <Button
-            android:id="@+id/button_edit_event"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:background="@drawable/background_login_two"
-            android:outlineAmbientShadowColor="#777575"
-            android:paddingLeft="48dp"
-            android:paddingRight="48dp"
-            android:text="Edit This Event"
-            android:textAllCaps="true"
-            android:textColor="#fff"
-            android:visibility="gone" />
+<!--        <Button-->
+<!--            android:id="@+id/button_edit_event"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="center_horizontal"-->
+<!--            android:background="@drawable/background_login_two"-->
+<!--            android:outlineAmbientShadowColor="#777575"-->
+<!--            android:paddingLeft="48dp"-->
+<!--            android:paddingRight="48dp"-->
+<!--            android:text="Edit This Event"-->
+<!--            android:textAllCaps="true"-->
+<!--            android:textColor="#fff"-->
+<!--            android:visibility="gone" />-->
 
         <TextView
             android:layout_width="wrap_content"

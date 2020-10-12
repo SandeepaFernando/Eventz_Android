@@ -76,7 +76,7 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
     String title, description, eventDate, venue, noOfGuests, fname, email;
     String token;
     String userType;
-    Button edit_eventBTN;
+    //Button edit_eventBTN;
     Button post_commentBTN;
     private EditText input_commentTv;
     String outputjsonComment;
@@ -114,7 +114,7 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
         num_peopleTV = findViewById(R.id.txtview_numofpeople);
         f_nameTV = findViewById(R.id.txtview_fname);
         emailTV = findViewById(R.id.txtview_email);
-        edit_eventBTN = findViewById(R.id.button_edit_event);
+        //edit_eventBTN = findViewById(R.id.button_edit_event);
         input_commentTv = findViewById(R.id.text_input_comment);
         post_commentBTN = findViewById(R.id.post_comment_btn);
         comment_number = findViewById(R.id.comment_number);
@@ -225,17 +225,17 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
                             Log.i("UTYPE", userType);
 
                             //======================== If Organizer can Edit(2)======================
-                            if (userType.equals("2")) {
-                                Log.i("UTYPE", userType);
-                                edit_eventBTN.setVisibility(View.VISIBLE);
-                                edit_eventBTN.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        Log.i("CILCK ", " Click on edit Event");
-                                        edit_event(eventId);
-                                    }
-                                });
-                            }
+//                            if (userType.equals("2")) {
+//                                Log.i("UTYPE", userType);
+//                                edit_eventBTN.setVisibility(View.VISIBLE);
+//                                edit_eventBTN.setOnClickListener(new View.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(View v) {
+//                                        Log.i("CILCK ", " Click on edit Event");
+//                                        edit_event(eventId);
+//                                    }
+//                                });
+//                            }
 
                             postComment(eventId, userId);
 

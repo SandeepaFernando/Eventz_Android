@@ -17,10 +17,14 @@ import com.example.eventz.chatbot.ChatActivity;
 import com.example.eventz.eventInfo.Event_infoActivity;
 import com.example.eventz.filter.FilterActivity;
 import com.example.eventz.preferences.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.messaging.FirebaseMessaging;
 
+import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -75,6 +79,7 @@ public class HomeActivity extends AppCompatActivity {
         //----------------------------------------------------------------------------------------------------------------------
         //NavigationView navigationView1 = (NavigationView) findViewById(R.id.nav_view);
 
+        initFCM();
 
         SharedPreferences sp = user.retrieveUserData(getApplicationContext());
         userType = sp.getString("USERTYPE", "");
@@ -97,6 +102,27 @@ public class HomeActivity extends AppCompatActivity {
             });
         }
 
+    }
+
+    private void initFCM() {
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                if (!task.isSuccessful()) {
+                    Log.w("TAG", "Fetching FCM registration token failed", task.getException());
+                    return;
+                }
+
+                // Get new FCM registration token
+                String token = task.getResult();
+
+                // Log and toast
+                //String msg = getString(R.string.msg_token_fmt, token);
+                Log.d("TAGFCM - ", token);
+                //Toast.makeText(HomeActivity.this, token, Toast.LENGTH_SHORT).show();
+
+            }
+        });
     }
 
     @Override
