@@ -11,6 +11,17 @@ import android.view.Menu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.eventz.R;
 import com.example.eventz.add_events.AddEventsActivity;
 import com.example.eventz.chatbot.ChatActivity;
@@ -33,13 +44,23 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Map;
+
 public class HomeActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     User user = new User();
-    String userType, userName, userEmail;
+    String userType, userName, userEmail, userId, token;
     TextView nav_userName, nav_email;
     View nView;
+    String outputjsonBid;
+    private RequestQueue mRequestQueue;
+    private int mStatusCode = 0;
 
     @SuppressLint("RestrictedApi")
     @Override
@@ -85,6 +106,8 @@ public class HomeActivity extends AppCompatActivity {
         userType = sp.getString("USERTYPE", "");
         userName = sp.getString("USERNAME", "User NAme");
         userEmail = sp.getString("USER_EMAIL", "User Email");
+        userId = sp.getString("USER_ID", "User Email");
+        token = sp.getString("KEY_TOKEN", "");
 
         nav_userName.setText(userName);
         nav_email.setText(userEmail);
@@ -112,17 +135,63 @@ public class HomeActivity extends AppCompatActivity {
                     Log.w("TAG", "Fetching FCM registration token failed", task.getException());
                     return;
                 }
-
                 // Get new FCM registration token
-                String token = task.getResult();
+                String FCMtoken = task.getResult();
 
-                // Log and toast
-                //String msg = getString(R.string.msg_token_fmt, token);
-                Log.d("TAGFCM - ", token);
-                //Toast.makeText(HomeActivity.this, token, Toast.LENGTH_SHORT).show();
+                postToken(FCMtoken);
+                Log.d("TAGFCM - ", FCMtoken);
+
 
             }
         });
+    }
+
+    private void postToken(final String FCMtoken) {
+        mRequestQueue = Volley.newRequestQueue(getApplicationContext());
+        String url = getString(R.string.ip);
+        String URL = url + "updatePushToken";
+        StringRequest request = new StringRequest(Request.Method.POST, URL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.i("RESPONS", response.toString());
+
+                        //if (mStatusCode == 200) {
+                        Log.i("FCM - ", "FCM Updated");
+                        //}
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println(error.getMessage());
+                Toast.makeText(getApplicationContext(), "Check your connectivity", Toast.LENGTH_LONG).show();
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("push_token", FCMtoken);
+                params.put("device_id", userId);
+                params.put("user_id", userId);
+                Log.i("PARAMS- ", params.toString());
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Authorization", "Token " + token);
+
+                return params;
+            }
+        };
+
+        int socketTimeout = 500000;//30 seconds - change to what you want
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        request.setRetryPolicy(policy);
+
+        mRequestQueue.add(request);
     }
 
     @Override
