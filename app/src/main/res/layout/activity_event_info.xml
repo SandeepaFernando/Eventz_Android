@@ -38,14 +38,14 @@
     <include layout="@layout/content_scrolling" />
 
     <ImageButton
-        android:id="@+id/fab"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:id="@+id/fab_bid"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_margin="@dimen/fab_margin"
         app:layout_anchor="@id/app_bar"
         app:backgroundTint="#00FFFFFF"
         app:layout_anchorGravity="bottom|end"
-        android:src="@drawable/bid_icon" />
+        android:src="@drawable/bid_now" />
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

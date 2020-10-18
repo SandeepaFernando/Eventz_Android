@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -163,6 +164,8 @@ public class HomeFragment extends Fragment implements VendorAdapter.onItemClickL
 
                                 LinearLayout linearLayout_loading = root.findViewById(R.id.home_add_event_layout);
                                 linearLayout_loading.setVisibility(View.GONE);
+
+                                Objects.requireNonNull(getActivity()).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                             }
 
 
@@ -202,9 +205,12 @@ public class HomeFragment extends Fragment implements VendorAdapter.onItemClickL
     public void pullDownFunc() {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onRefresh() {
                 Log.i("onRefresh", "XXXXXXXXXXXXXXX-onRefresh");
+                Objects.requireNonNull(getActivity()).getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
                 new Handler().postDelayed(new Runnable() {
                     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -229,6 +235,8 @@ public class HomeFragment extends Fragment implements VendorAdapter.onItemClickL
             @Override
             public void onRefresh() {
                 Log.i("onRefresh", "XXXXXXXXXXXXXXX-onRefresh");
+                getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
                 new Handler().postDelayed(new Runnable() {
                     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -283,6 +291,8 @@ public class HomeFragment extends Fragment implements VendorAdapter.onItemClickL
                             mvendorAdapter = new VendorAdapter(getActivity(), mevnetList);
                             mRecyclerView.setAdapter(mvendorAdapter);
                             VendorAdapter.setOnItemClickListener(HomeFragment.this);
+
+                            Objects.requireNonNull(getActivity()).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
 
                         } catch (JSONException e) {

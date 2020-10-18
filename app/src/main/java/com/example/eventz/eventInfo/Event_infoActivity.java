@@ -1,5 +1,8 @@
 package com.example.eventz.eventInfo;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -17,18 +20,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.eventz.MainActivity;
-import com.example.eventz.home.HomeActivity;
-import com.example.eventz.home.VendorAdapter;
 import com.example.eventz.preferences.User;
-import com.example.eventz.register.RegOrganizerScrollingActivity;
-import com.example.eventz.register.RegVenderScrollingActivity;
-import com.example.eventz.register.SkillAdapter;
-import com.example.eventz.register.SkillItem;
 import com.example.eventz.updateEvent.UpdateEvents;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -41,13 +35,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.eventz.R;
-import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.iid.MessengerIpcClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -59,21 +50,26 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class Event_infoActivity extends AppCompatActivity implements CommentAdapter.onItemClickListener {
+public class Event_infoActivity extends AppCompatActivity implements CommentAdapter.onItemClickListener, BidAdapter.onItemClickListener {
     User user = new User();
     String eventId;
     String userId;
     private ArrayList<EventSkillInfo> mSkillList;
     private ArrayList<CommentInfo> mCommentList;
+    private ArrayList<BidInfo> mBidtList;
     private ArrayList<String> commentIdList;
+    private ArrayList<String> bidIdList;
     private RecyclerView mRecyclerView;
     private RecyclerView mRecyclerViewComment;
+    private RecyclerView mRecyclerViewBid;
     private EventSkillAdapter mskillAdapter;
+    private BidAdapter mBidAdapter;
     private CommentAdapter mcommentAdapter;
     private RequestQueue mRequestQueueInfo;
     private RequestQueue mRequestQueueComment;
-    TextView titleTV, descriptionTV, venueTV, dateTV, num_peopleTV, f_nameTV, emailTV, comment_number;
-    String title, description, eventDate, venue, noOfGuests, fname, email;
+    private RequestQueue mRequestQueueBid;
+    TextView titleTV, descriptionTV, venueTV, dateTV, num_peopleTV, f_nameTV, emailTV, comment_number, budgetTV;
+    String title, description, eventDate, venue, noOfGuests, fname, email, budget;
     String token;
     String userType;
     //Button edit_eventBTN;
@@ -82,6 +78,7 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
     String outputjsonComment;
     private int mStatusCode = 0;
     String commentTxt;
+    String outputjsonBid;
     String commentNumber;
     String userNameSP;
     String userNameComment;
@@ -97,12 +94,12 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
         CollapsingToolbarLayout toolBarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         toolBarLayout.setTitle(getTitle());
 
-        ImageButton fab = findViewById(R.id.fab);
+        ImageButton fab = findViewById(R.id.fab_bid);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                bidDialog();
+
             }
         });
 
@@ -118,12 +115,14 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
         input_commentTv = findViewById(R.id.text_input_comment);
         post_commentBTN = findViewById(R.id.post_comment_btn);
         comment_number = findViewById(R.id.comment_number);
+        budgetTV = findViewById(R.id.txtview_money);
 
         SharedPreferences sp = user.retrieveUserData(Objects.requireNonNull(getApplicationContext()));
         userType = sp.getString("USERTYPE", "");
         token = sp.getString("KEY_TOKEN", "");
         userNameSP = sp.getString("USERNAME", "");
         commentIdList = new ArrayList<>();
+        bidIdList = new ArrayList<>();
 
         mSkillList = new ArrayList<>();
         mRecyclerView = findViewById(R.id.event_skill_set);
@@ -133,7 +132,109 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
         mRecyclerViewComment = findViewById(R.id.recyclerView_user_comments);
         mRecyclerViewComment.setLayoutManager(new LinearLayoutManager(this));
 
+        mBidtList = new ArrayList<>();
+        mRecyclerViewBid = findViewById(R.id.recyclerView_event_bids);
+        mRecyclerViewBid.setLayoutManager(new LinearLayoutManager(this));
+
         getEventbyid();
+
+    }
+
+    private void bidDialog() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(Event_infoActivity.this);
+        builder.setCancelable(false);
+        builder.setTitle("Confirm");
+        builder.setMessage("Are you sure You want to Bid for this Event !");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Context context = getApplicationContext();
+                CharSequence text = "Bid Successfully.";
+                int duration = Toast.LENGTH_SHORT;
+                Toast toast = Toast.makeText(context, text, duration);
+                toast.show();
+                postBid(eventId, userId);
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        builder.create().show();
+    }
+
+    private void postBid(String eventId, String userId) {
+        String bidAmount = "1000";
+        outputjsonBid = "{" +
+                "\"eventId\"" + ":" + "\"" + eventId + "\"," +
+                "\"bidder\"" + ":" + "\"" + userId + "\"," +
+                "\"bidAmount\"" + ":" + "\"" + bidAmount + "\"" +
+                "}";
+        Log.i("Commnet Json - ", outputjsonBid);
+
+        mRequestQueueBid = Volley.newRequestQueue(getApplicationContext());
+        String url = getString(R.string.ip);
+        String URL = url + "bidForEvent";
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.i("RESPONS", response.toString());
+                        try {
+                            String id = response.getString("id");
+                            Log.i("RES- Comment- ", id);
+                            if (mStatusCode == 201) {
+                                Toast.makeText(Event_infoActivity.this, "Bid Added !.", Toast.LENGTH_LONG).show();
+                                getEventbyid();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(getApplicationContext(), "Post bid Fail!, Try Again.", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println(error.getMessage());
+                Toast.makeText(getApplicationContext(), "Check your connectivity", Toast.LENGTH_LONG).show();
+            }
+        }) {
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+            @Override
+            public byte[] getBody() {
+                return outputjsonBid == null ? null : outputjsonBid.getBytes(Charset.forName("UTF-8"));
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Authorization", "Token " + token);
+
+                return params;
+            }
+
+            @Override
+            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+                if (response != null) {
+                    mStatusCode = response.statusCode;
+                }
+                return super.parseNetworkResponse(response);
+            }
+
+        };
+
+        int socketTimeout = 500000;//30 seconds - change to what you want
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        request.setRetryPolicy(policy);
+
+        mRequestQueueBid.add(request);
 
     }
 
@@ -171,6 +272,7 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
                                 eventDate = jsonObject.getString("eventDate");
                                 venue = jsonObject.getString("venue");
                                 noOfGuests = jsonObject.getString("noOfGuests");
+                                budget = jsonObject.getString("eventBudget");
 
                                 JSONArray tags = jsonObject.getJSONArray("eventTags");
                                 Log.i("TAGARR", tags.toString());
@@ -204,6 +306,22 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
 
                                 }
 
+                                //-------------------Bids-------------------------
+
+                                JSONArray eventBids = jsonObject.getJSONArray("eventBids");
+                                for (int k = 0; k < eventBids.length(); k++) {
+                                    JSONObject bidObject = eventBids.getJSONObject(k);
+                                    String bidId = bidObject.getString("id");
+                                    bidIdList.add(bidId);
+
+                                    JSONObject userOBJ = bidObject.getJSONObject("bidder");
+                                    String uname = userOBJ.getString("first_name");
+                                    String uemail = userOBJ.getString("email");
+
+                                    mBidtList.add(new BidInfo(uname, uemail));
+
+                                }
+
                             }
 
                             mskillAdapter = new EventSkillAdapter(Event_infoActivity.this, mSkillList);
@@ -212,6 +330,10 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
                             mcommentAdapter = new CommentAdapter(Event_infoActivity.this, mCommentList);
                             mRecyclerViewComment.setAdapter(mcommentAdapter);
                             CommentAdapter.setOnItemClickListener(Event_infoActivity.this);
+
+                            mBidAdapter = new BidAdapter(Event_infoActivity.this, mBidtList);
+                            mRecyclerViewBid.setAdapter(mBidAdapter);
+                            BidAdapter.setOnItemClickListener(Event_infoActivity.this);
 
 
                             titleTV.setText(title);
@@ -222,6 +344,7 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
                             f_nameTV.setText(fname);
                             emailTV.setText(email);
                             comment_number.setText("(" + commentNumber + ")");
+                            budgetTV.setText(budget);
                             Log.i("UTYPE", userType);
 
                             //======================== If Organizer can Edit(2)======================
@@ -379,5 +502,43 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
     public void onItemClickEdit(int position) {
         //This is Edit
         Log.i("CLICK ", "Click Edit" + position);
+    }
+
+    @Override
+    public void onItemVendorClick(int position) {
+        Log.i("CLICK ", "Click onItemVendorClick" + position);
+        String bidId = bidIdList.get(position);
+        acceptBidDialog(bidId, eventId);
+    }
+
+    private void acceptBidDialog(final String bidId, final String eventId) {
+        Log.i("CLICK ", eventId + bidId + "++++++");
+        final AlertDialog.Builder builder = new AlertDialog.Builder(Event_infoActivity.this);
+        builder.setCancelable(false);
+        builder.setTitle("Confirm");
+        builder.setMessage("Are you sure You want to Accept this Vendor !");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Context context = getApplicationContext();
+                CharSequence text = "Accept Successfully.";
+                int duration = Toast.LENGTH_SHORT;
+                Toast toast = Toast.makeText(context, text, duration);
+                toast.show();
+                //acceptBidder(eventId, userId);
+                acceptBidder(eventId, bidId);
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        builder.create().show();
+    }
+
+    private void acceptBidder(String eventId, String bidId) {
+        Log.i("CLICK ", eventId + bidId + "+++++=====");
     }
 }

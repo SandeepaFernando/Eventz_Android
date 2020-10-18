@@ -14,4 +14,10 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
         Log.d(TAG, "From: " + remoteMessage.getFrom());
     }
+
+    @Override
+    public void onNewToken(@NonNull String s) {
+        super.onNewToken(s);
+
+    }
 }
