@@ -19,6 +19,7 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.eventz.preferences.User;
 import com.example.eventz.updateEvent.UpdateEvents;
@@ -27,6 +28,7 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -66,10 +68,12 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
     private BidAdapter mBidAdapter;
     private CommentAdapter mcommentAdapter;
     private RequestQueue mRequestQueueInfo;
+    private RequestQueue mRequestQueueAccBid;
     private RequestQueue mRequestQueueComment;
     private RequestQueue mRequestQueueBid;
-    TextView titleTV, descriptionTV, venueTV, dateTV, num_peopleTV, f_nameTV, emailTV, comment_number, budgetTV;
-    String title, description, eventDate, venue, noOfGuests, fname, email, budget;
+    TextView titleTV, descriptionTV, venueTV, dateTV, num_peopleTV, f_nameTV, emailTV, comment_number, budgetTV, accVendorNameTv, accVendorEmailTv;
+    String title, description, eventDate, venue, noOfGuests, fname, email, budget, accVendorfName, accVendorEmail;
+    CardView accVendordCardView;
     String token;
     String userType;
     //Button edit_eventBTN;
@@ -116,6 +120,9 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
         post_commentBTN = findViewById(R.id.post_comment_btn);
         comment_number = findViewById(R.id.comment_number);
         budgetTV = findViewById(R.id.txtview_money);
+        accVendorNameTv = findViewById(R.id.txtview_name_accepted_vendor);
+        accVendorEmailTv = findViewById(R.id.txtview_email_accepted_vendor);
+        accVendordCardView = findViewById(R.id.card_acc_vendor);
 
         SharedPreferences sp = user.retrieveUserData(Objects.requireNonNull(getApplicationContext()));
         userType = sp.getString("USERTYPE", "");
@@ -288,6 +295,18 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
                                 fname = organizerobj.getString("first_name");
                                 email = organizerobj.getString("email");
 
+                                //=====================================================
+
+                                if (!jsonObject.isNull("acceptedVendor")) {
+
+                                    JSONObject accVendorobj = jsonObject.getJSONObject("acceptedVendor");
+
+                                    accVendordCardView.setVisibility(View.VISIBLE);
+                                    accVendorfName = accVendorobj.getString("first_name");
+                                    accVendorEmail = accVendorobj.getString("email");
+
+                                }
+
                                 //-----------------comment-----------------
 
                                 JSONArray eventReviews = jsonObject.getJSONArray("eventReviews");
@@ -345,6 +364,8 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
                             emailTV.setText(email);
                             comment_number.setText("(" + commentNumber + ")");
                             budgetTV.setText(budget);
+                            accVendorNameTv.setText(accVendorfName);
+                            accVendorEmailTv.setText(accVendorEmail);
                             Log.i("UTYPE", userType);
 
                             //======================== If Organizer can Edit(2)======================
@@ -521,11 +542,6 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 Context context = getApplicationContext();
-                CharSequence text = "Accept Successfully.";
-                int duration = Toast.LENGTH_SHORT;
-                Toast toast = Toast.makeText(context, text, duration);
-                toast.show();
-                //acceptBidder(eventId, userId);
                 acceptBidder(eventId, bidId);
             }
         });
@@ -538,7 +554,59 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
         builder.create().show();
     }
 
-    private void acceptBidder(String eventId, String bidId) {
+    private void acceptBidder(String eventId, final String bidId) {
         Log.i("CLICK ", eventId + bidId + "+++++=====");
+        mRequestQueueAccBid = Volley.newRequestQueue(getApplicationContext());
+        String url = getString(R.string.ip);
+        String URL = url + "acceptBidder";
+        StringRequest request = new StringRequest(Request.Method.POST, URL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            Log.i("RES", response);
+                            String result = jsonObject.getString("success");
+
+                            if (result.equals("true")) {
+                                Toast.makeText(Event_infoActivity.this, "Accepted.", Toast.LENGTH_LONG).show();
+                            } else
+                                Toast.makeText(Event_infoActivity.this, "NOT Accepted!!", Toast.LENGTH_LONG).show();
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println(error.getMessage());
+                Toast.makeText(getApplicationContext(), "Check your connectivity", Toast.LENGTH_LONG).show();
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("bidId", bidId);
+                Log.i("PARAMS- ", params.toString());
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Authorization", "Token " + token);
+
+                return params;
+            }
+        };
+
+        int socketTimeout = 500000;//30 seconds - change to what you want
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        request.setRetryPolicy(policy);
+        mRequestQueueAccBid.add(request);
+
     }
 }
