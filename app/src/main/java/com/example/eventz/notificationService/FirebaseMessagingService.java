@@ -34,7 +34,6 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         SharedPreferences sp = user.retrieveUserData(getApplicationContext());
         userId = sp.getString("USER_ID", "");
 
-        Log.d(TAG, "From: " + remoteMessage.getFrom());
         Log.d(TAG, "DATA: " + remoteMessage.getData());
 
         try {
