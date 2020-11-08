@@ -18,10 +18,10 @@
             android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@drawable/party_image"
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            android:background="@drawable/party_image"
             app:titleEnabled="false"
             app:toolbarId="@+id/toolbar">
 
@@ -42,10 +42,11 @@
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_margin="@dimen/fab_margin"
-        app:layout_anchor="@id/app_bar"
+        android:src="@drawable/bid_now"
+        android:visibility="visible"
         app:backgroundTint="#00FFFFFF"
-        app:layout_anchorGravity="bottom|end"
-        android:src="@drawable/bid_now" />
+        app:layout_anchor="@id/app_bar"
+        app:layout_anchorGravity="bottom|end" />
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

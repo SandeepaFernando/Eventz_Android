@@ -71,6 +71,7 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
     private RequestQueue mRequestQueueAccBid;
     private RequestQueue mRequestQueueComment;
     private RequestQueue mRequestQueueBid;
+    private RequestQueue mRequestQueueCommentDelete;
     TextView titleTV, descriptionTV, venueTV, dateTV, num_peopleTV, f_nameTV, emailTV, comment_number, budgetTV, accVendorNameTv, accVendorEmailTv;
     String title, description, eventDate, venue, noOfGuests, fname, email, budget, accVendorfName, accVendorEmail;
     CardView accVendordCardView;
@@ -86,6 +87,7 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
     String commentNumber;
     String userNameSP;
     String userNameComment;
+    ImageButton fabBid;
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
@@ -98,16 +100,8 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
         CollapsingToolbarLayout toolBarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         toolBarLayout.setTitle(getTitle());
 
-        ImageButton fab = findViewById(R.id.fab_bid);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bidDialog();
-
-            }
-        });
-
         //-----------------------------------------------------------------------------
+        fabBid = findViewById(R.id.fab_bid);
         titleTV = findViewById(R.id.txtview_title);
         descriptionTV = findViewById(R.id.txtview_description);
         venueTV = findViewById(R.id.txtview_venue);
@@ -128,6 +122,11 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
         userType = sp.getString("USERTYPE", "");
         token = sp.getString("KEY_TOKEN", "");
         userNameSP = sp.getString("USERNAME", "");
+
+        if (userType.equals("2")) {
+            fabBid.setVisibility(View.GONE);
+        }
+
         commentIdList = new ArrayList<>();
         bidIdList = new ArrayList<>();
 
@@ -249,7 +248,9 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
         if (!mSkillList.isEmpty() | !mCommentList.isEmpty()) {
             mSkillList.clear();
             mCommentList.clear();
+            commentIdList.clear();
         }
+
         mRequestQueueInfo = Volley.newRequestQueue(this);
         final Intent intent = getIntent();
         eventId = intent.getStringExtra("eventId");
@@ -313,6 +314,7 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
                                 commentNumber = String.valueOf(eventReviews.length());
                                 for (int k = 0; k < eventReviews.length(); k++) {
                                     JSONObject commentObject = eventReviews.getJSONObject(k);
+                                    String id = commentObject.getString("id");
                                     String commentStr = commentObject.getString("comment");
                                     String commentDate = commentObject.getString("commentedOn");
 
@@ -320,6 +322,7 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
                                     String commentName = commentedByOBJ.getString("first_name");
                                     userNameComment = commentedByOBJ.getString("username");
 
+                                    commentIdList.add(id);
                                     mCommentList.add(new CommentInfo(commentName, commentDate, commentStr, userNameSP, userNameComment));
                                     Log.i("XXXXXXXXXXXXXXXXX", userNameSP + "===" + userNameComment);
 
@@ -383,6 +386,15 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
 
                             postComment(eventId, userId);
 
+                            fabBid.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    bidDialog();
+
+                                }
+                            });
+
+
                         } catch (JSONException e) {
                             Log.i("JSONException", e.getMessage());
                             Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_LONG).show();
@@ -409,7 +421,6 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
                 return params;
             }
         };
-
 
         int socketTimeout = 500000;//30 seconds - change to what you want
         RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
@@ -517,6 +528,67 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
     public void onItemClick(int position) {
         //This is Delete
         Log.i("CLICK ", "Click Delete" + position);
+        String commetId = commentIdList.get(position);
+        Log.i("CLICK- ID Comment ", "Click Delete" + commetId);
+
+        mRequestQueueCommentDelete = Volley.newRequestQueue(getApplicationContext());
+        String url = getString(R.string.ip);
+        String URL = url + "eventComment/" + commetId + "/";
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.DELETE, URL, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.i("RESPONS", response.toString());
+                        try {
+                            String responseSt = response.getString("response");
+                            Log.i("RES- CommentDELETE- ", responseSt);
+
+                            if (mStatusCode == 201) {
+                                Toast.makeText(Event_infoActivity.this, "Deleted.", Toast.LENGTH_LONG).show();
+                                getEventbyid();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(getApplicationContext(), "Delete Comment Fail!, Try Again.", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println(error.getMessage());
+                Toast.makeText(getApplicationContext(), "Check your connectivity", Toast.LENGTH_LONG).show();
+            }
+        }) {
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Authorization", "Token " + token);
+
+                return params;
+            }
+
+            @Override
+            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+                if (response != null) {
+                    mStatusCode = response.statusCode;
+                }
+                return super.parseNetworkResponse(response);
+            }
+
+        };
+
+        int socketTimeout = 500000;//30 seconds - change to what you want
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        request.setRetryPolicy(policy);
+
+        mRequestQueueCommentDelete.add(request);
+
     }
 
     @Override
