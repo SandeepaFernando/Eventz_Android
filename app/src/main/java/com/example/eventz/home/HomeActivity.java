@@ -3,6 +3,7 @@ package com.example.eventz.home;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -36,6 +37,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -50,6 +52,7 @@ import org.json.JSONObject;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -62,6 +65,7 @@ public class HomeActivity extends AppCompatActivity {
     private RequestQueue mRequestQueue;
     private int mStatusCode = 0;
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +81,7 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
 
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

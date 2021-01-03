@@ -28,7 +28,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
-                    android:width="60dp"
+                    android:width="65dp"
                     android:hint="Name"
                     android:textColor="@android:color/black"
                     android:textSize="15sp" />
@@ -54,7 +54,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
-                    android:width="60dp"
+                    android:width="65dp"
                     android:hint="Email"
                     android:textColor="@android:color/black"
                     android:textSize="15sp" />
@@ -80,7 +80,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
-                    android:width="60dp"
+                    android:width="65dp"
                     android:hint="Location"
                     android:textColor="@android:color/black"
                     android:textSize="15sp" />

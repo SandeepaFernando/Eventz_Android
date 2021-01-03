@@ -74,6 +74,8 @@ public class FilterActivity extends AppCompatActivity implements AdapterView.OnI
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_filter);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
+
 
         textInputBudget = findViewById(R.id.text_input_min);
         textInputEventDate = findViewById(R.id.text_input_date);

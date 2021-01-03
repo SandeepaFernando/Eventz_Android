@@ -6,18 +6,30 @@
     android:layout_height="match_parent"
     android:paddingLeft="18dp"
     android:paddingRight="18dp"
-    android:background="@drawable/registerbackground">
+    android:background="@drawable/reg_bg">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Registration"
+        android:textAlignment="center"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="60dp"
+        android:textSize="38sp"
+        android:textColor="#ec5121"
+        android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="left"
-        android:layout_marginTop="100dp"
-        android:textColor="#fff"
+        android:textAlignment="center"
+        android:layout_marginTop="60dp"
+        android:textColor="#605F5F"
         android:textSize="18dp"
-        android:text="1. Register As A Vender"
-        android:textAlignment="viewStart"
+        android:text="Register As A Vendor"
+        android:textStyle="bold"
         tools:ignore="RtlCompat" />
 
     <TextView
@@ -27,9 +39,9 @@
         android:layout_gravity="left"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="25dp"
-        android:textColor="#fff"
+        android:textColor="#605F5F"
         android:textSize="18dp"
-        android:text="* Create your own portfolio"
+        android:text="- Create your own portfolio"
         tools:ignore="RtlCompat" />
 
     <TextView
@@ -39,9 +51,9 @@
         android:layout_gravity="left"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="25dp"
-        android:textColor="#fff"
+        android:textColor="#605F5F"
         android:textSize="18dp"
-        android:text="* Find the best job suits you"
+        android:text="- Find the best job suits you"
         tools:ignore="RtlCompat" />
 
     <Button
@@ -49,26 +61,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/background_login_two"
+        android:outlineAmbientShadowColor="#777575"
         android:paddingLeft="48dp"
         android:paddingRight="48dp"
         android:text="Register AS vender"
         android:textAllCaps="true"
-        android:textColor="#fff"
-        android:outlineAmbientShadowColor="#777575"
-        />
+        android:textColor="#fff" />
 
     <TextView
         android:id="@+id/textView6"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="left"
-        android:layout_marginTop="70dp"
-        android:textColor="#fff"
+        android:layout_marginTop="35dp"
+        android:textColor="#605F5F"
         android:textSize="18dp"
-        android:text="2. Register As A Organizer"
-        android:textAlignment="viewStart"
+        android:text="Register As A Organizer"
+        android:textStyle="bold"
+        android:textAlignment="center"
         tools:ignore="RtlCompat" />
 
     <TextView
@@ -78,9 +90,9 @@
         android:layout_gravity="left"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="25dp"
-        android:textColor="#fff"
+        android:textColor="#605F5F"
         android:textSize="18dp"
-        android:text="* Post your Events"
+        android:text="- Post your Events"
         tools:ignore="RtlCompat" />
 
     <TextView
@@ -90,9 +102,9 @@
         android:layout_gravity="left"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="25dp"
-        android:textColor="#fff"
+        android:textColor="#605F5F"
         android:textSize="18dp"
-        android:text="* Find the best vendor for your job"
+        android:text="- Find the best vendor for your job"
         tools:ignore="RtlCompat" />
 
 
@@ -101,7 +113,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/background_login_two"
         android:paddingLeft="48dp"
         android:paddingRight="48dp"

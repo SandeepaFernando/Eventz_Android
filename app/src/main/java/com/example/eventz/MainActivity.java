@@ -29,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 import com.example.eventz.preferences.UserSession;
 import com.example.eventz.preferences.User;
@@ -44,13 +45,14 @@ public class MainActivity extends AppCompatActivity {
     User usersp = new User();
     private String token;
     private RequestQueue requestQueue;
-    //String URL = "http://192.168.1.100:8000/login";
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @SuppressLint("CommitPrefEdits")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
 
         session = new UserSession(getApplicationContext());
         password = findViewById(R.id.editTextPassword);

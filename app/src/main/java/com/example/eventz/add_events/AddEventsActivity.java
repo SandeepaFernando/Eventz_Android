@@ -52,6 +52,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class AddEventsActivity extends AppCompatActivity implements SkillAdapterAddEvent.onItemClickListener {
     User user = new User();
@@ -100,10 +101,13 @@ public class AddEventsActivity extends AppCompatActivity implements SkillAdapter
     private int mStatusCode = 0;
     String dateIn_IN;
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_events);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
+
 
         SharedPreferences sp = user.retrieveUserData(getApplicationContext());
         userType = sp.getString("USERTYPE", "");
