@@ -56,7 +56,7 @@ public class RegOrganizerScrollingActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         CollapsingToolbarLayout toolBarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
-        toolBarLayout.setTitle(getTitle());
+        toolBarLayout.setTitle("Register As Organizer");
 
         textInputEmail = findViewById(R.id.text_input_email_organizer);
         textInputUsername = findViewById(R.id.text_input_username_organizer);
