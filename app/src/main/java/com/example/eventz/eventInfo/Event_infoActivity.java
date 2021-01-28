@@ -249,6 +249,11 @@ public class Event_infoActivity extends AppCompatActivity implements CommentAdap
             mSkillList.clear();
             mCommentList.clear();
             commentIdList.clear();
+
+        }
+        if (!mBidtList.isEmpty()) {
+            mBidtList.clear();
+            bidIdList.clear();
         }
 
         mRequestQueueInfo = Volley.newRequestQueue(this);
